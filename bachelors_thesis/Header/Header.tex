@@ -1,0 +1,69 @@
+%KOMA-Script-Klasse: scrreprt
+%deutsches Design, Schriftgröße 12, DIN A4
+\documentclass[12pt,a4paper,oneside]{scrreprt}
+%Seitenspiegel einstellen
+\usepackage[a4paper]{geometry}
+\geometry{a4paper,left=30mm,right=25mm,
+bottom=20mm,top=15mm,bindingoffset=2mm,
+includehead,includefoot}
+
+
+
+%schalte Umlaute frei
+\usepackage[ngerman]{babel}
+%passende Codierung
+\usepackage[utf8]{inputenc}
+%Seitenspiegel einzustellen
+\usepackage[a4paper]{geometry}
+%Mathepaket
+\usepackage{amsmath}
+%Symbole
+\usepackage{amssymb}
+%griechische Symbole
+\usepackage{upgreek}
+%weitere Symbole
+\usepackage{pxfonts}
+% Phonetischen Alphabete für LaTeX
+\usepackage{tipa}
+%farbige Schriften
+\usepackage{xcolor}
+\usepackage{scrhack}
+%Bilder fixieren
+\usepackage{float}
+%Grafiken einbinden
+\usepackage{graphicx}
+% Kopf- und Fußzeilen
+\usepackage[automark,standardstyle,markusedcase]{scrpage2}
+% deutsche Überschriften
+\usepackage[ngerman]{translator}
+% Kopfzeilenabstand festlegen
+\setlength{\headheight}{10mm}
+%Abb. statt Abbildung
+\usepackage{caption3}
+%draft Wasserzeichen
+\usepackage{draftwatermark}
+\SetWatermarkLightness{0.95}
+\addto\captionsngerman{
+\renewcommand{\figurename}{Abb.}
+\renewcommand{\tablename}{Tab.}
+}
+%Glossar-Pakage
+\usepackage[
+nonumberlist, %keine Seitenzahlen anzeigen
+acronym,      %ein Abkürzungsverzeichnis erstellen
+toc]          %Einträge im Inhaltsverzeichnis      
+{glossaries}
+\usepackage{cite}
+%Glossar einschalten
+\makeglossaries
+
+
+
+%Einstellungen Kopfzeile
+\pagestyle{scrheadings} 
+\setheadsepline{0.4pt}
+\pagestyle{scrheadings}
+\renewcommand*{\chapterpagestyle}{scrheadings}
+
+%Zeilenabstand * 1.25 (default)
+\renewcommand{\baselinestretch}{1.25}\normalsize

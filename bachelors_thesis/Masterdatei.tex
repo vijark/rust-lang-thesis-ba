@@ -1,0 +1,32 @@
+% MAIN-DOCUMENT
+
+% Header beinhaltet Dokumentenklasse sowie includierte Packages
+\input{Header/Header}
+
+\begin{document}
+
+% TODO: Glossar
+
+\include{Titelseite/Titelseite}
+\input{LeereSeite/LeereSeite}
+\include{Erklaerung/Erklaerung}
+\input{LeereSeite/LeereSeite}
+% TODO: Abstract
+
+% Liste Menüpunkte als Inhaltsverzeichnis
+\tableofcontents
+\setcounter{page}{1}
+
+% Kapitel
+
+% BibTex mit Stil alpha
+\nocite{*}
+\bibliography{Bibliothek}{}
+\bibliographystyle{alpha}
+
+% Abbildungsverzeichnis, Tabellenverzeichnis und Glossar ausgeben
+\listoffigures
+\listoftables
+\printglossaries 
+
+\end{document}

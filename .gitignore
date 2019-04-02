@@ -1,0 +1,11 @@
+target/
+Cargo.lock
+*.rs.bk
+
+.vscode/
+.DS_Store
+
+Masterdatei.*
+!Masterdatei.tex
+!Masterdatei.pdf
+*.aux
