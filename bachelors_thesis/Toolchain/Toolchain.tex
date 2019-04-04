@@ -1,0 +1,78 @@
+\chapter{Rust toolchain}
+
+Die Rust toolchain ist eine Sammlung von Werkzeugen, die dabei helfen, den Compiler aktuell zu halten und Projekte zu verwalten.
+
+
+\section{rustup}
+
+Das Rustup-Tool ist die empfohlene Installationsmethode für Rust. Das Tool ermöglicht zusätzlich die Verwaltung von verschiedenen Versionen, Komponenten und Plattformen. Um zwischen den Versionen stable, beta und nightly zu wechseln, kann auf der Kommandozeile eingegeben werden:
+
+\begin{lstlisting}   
+    rustup install beta                 # release channel
+    rustup install nightly
+    rustup update                       # update all channels
+    rustup toolchain default nightly    # switch to 'nightly'
+\end{lstlisting}
+
+Rust unterstützt auch das Kompilieren für andere Zielsysteme, dabei kann rustup helfen. So kann man beispielsweise MUSL verwenden:
+
+\begin{lstlisting}
+    # add target
+    rustup target add x86-64-unknown-linux-musl
+    # build project with target
+    cargo build --target=x86_64-unknown-linux-musl
+\end{lstlisting}
+
+Mit Hilfe von rustup können verschiedene Komponenten installiert werden, z.B.:
+
+\begin{itemize}
+    \item rust-docs: Lokale Kopie der Rust-Dokumentation, um sie offline lesen zu können.
+    \item rust-src: Lokale Kopie des Quellcodes von Rust. Autokomplettierungs-Tools verwenden diese Information.
+    \item rustfmt-preview: Zur automatischen Code-Formatierung.
+\end{itemize}
+
+\begin{lstlisting}
+    rustup component add rustfmt-preview
+\end{lstlisting}
+
+
+\section{rustc}
+
+Der Compiler von Rust, er übersetzt den Quellcode in einen binären code, entweder als Bibliothek oder als ausführbare Datei. Die meisten Rust-Programmierer rufen rustc nicht direkt auf, sondern indirekt über Cargo.
+
+\subsubsection{Grundlegende Verwendung}
+
+Um ein Programm mit rustc zu übersetzen kann wie bei C vorgegangen werden:
+
+\begin{lstlisting}
+    gcc   hello.c  -o helloC            # C program
+    rustc hello.rs -o helloRust         # Rust program
+\end{lstlisting}
+
+Anders als in C muss nur der crate root\footnote{Quellcode-Datei mit der main() Methode} angegeben werden. Der Compiler kann mithilfe des Codes selbständig festellen, welche Dateien er übersetzen und linken muss. Es müssen somit keine Objektdateien erstellt werden.
+
+\subsubsection{Lints}
+
+Ein \glqq Lint\grqq{} ist ein Werkzeug, das zur Verbesserung des Quellcodes verwendet wird. Der Rust-Compiler enthält eine Reihe von Lints. Beim Kompilieren werden dadurch Warnungen oder Fehlermeldungen ausgeben. Beispiel:
+
+\begin{lstlisting}
+    $ cat main.rs
+    fn main() {
+        let x = 5;
+    }
+
+    $ rustc main.rs
+    warning: unused variable: `x`
+     --> main.rs:2:9
+      |
+    2 |     let x = 5;
+      |         ^ help: consider using `_x` instead
+      |
+      = note: #[warn(unused_variables)] on by default
+\end{lstlisting}
+
+Das ist das \glqq unused\_variables\grqq{} Lint. Es besagt, dass eine Variable eingeführt wurde, die nicht im Code verwendet wurde. Dies ist nicht falsch, es könnte jedoch ein Bug sein.
+
+
+\section{Cargo}
+
