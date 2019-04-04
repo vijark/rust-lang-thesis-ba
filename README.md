@@ -6,7 +6,7 @@
 2. Rust toolchain
     - rustup
     - rustc
-    - cargo
+    - Cargo
         - Projektverwaltung
         - Veröffentlichung bei crates.io
         - Externe Tools
