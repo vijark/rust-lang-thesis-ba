@@ -6,6 +6,8 @@
 2. Rust toolchain
     - rustup
     - rustc
+        - Grundlegende Verwendung
+        - Lints
     - Cargo
         - Projektverwaltung
         - Veröffentlichung bei crates.io
