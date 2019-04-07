@@ -5,7 +5,7 @@ Die Rust toolchain ist eine Sammlung von Werkzeugen, die dabei helfen, den Compi
 
 \section{rustup}
 
-Das Rustup-Tool ist die empfohlene Installationsmethode für Rust. Das Tool ermöglicht zusätzlich die Verwaltung von verschiedenen Versionen, Komponenten und Plattformen. Um zwischen den Versionen stable, beta und nightly zu wechseln, kann auf der Kommandozeile eingegeben werden:
+Das Rustup-Tool ist die empfohlene Installationsmethode für Rust. Das Tool ermöglicht zusätzlich die Verwaltung von verschiedenen Versionen, Komponenten und Plattformen. Um zwischen den Versionen stable, beta und nightly zu wechseln, kann auf der Kommandozeile eingegeben werden: \cite{RustEdition}
 
 \begin{lstlisting}   
     rustup install beta                 # release channel
@@ -38,7 +38,7 @@ Mit Hilfe von rustup können verschiedene Komponenten installiert werden, z.B.:
 
 \section{rustc}
 
-Der Compiler von Rust, er übersetzt den Quellcode in einen binären code, entweder als Bibliothek oder als ausführbare Datei. Die meisten Rust-Programmierer rufen rustc nicht direkt auf, sondern indirekt über Cargo.
+Der Compiler von Rust, er übersetzt den Quellcode in einen binären code, entweder als Bibliothek oder als ausführbare Datei. Die meisten Rust-Programmierer rufen rustc nicht direkt auf, sondern indirekt über Cargo. \cite{RustcBook}
 
 \subsection{Grundlegende Verwendung}
 
@@ -76,7 +76,7 @@ Das ist das \glqq unused\_variables\grqq{} Lint. Es besagt, dass eine Variable e
 
 \section{Cargo}
 
-Cargo ein Projektmanager für Rust. Damit können Abhängigkeiten heruntergeladen und verteilbare Pakete erstellt werden, welche auf crates.io\footnote{Paketeregister der Rust-Community} hochgeladen werden können.
+Cargo ein Projektmanager für Rust. Damit können Abhängigkeiten heruntergeladen und verteilbare Pakete erstellt werden, welche auf crates.io\footnote{Paketeregister der Rust-Community} hochgeladen werden können. \cite{CargoBook}
 
 \subsection{Projektverwaltung}
 
@@ -155,3 +155,161 @@ Zum Testen:
     # run all tests marked as ignored
     $ cargo test -- --ignored
 \end{lstlisting}
+
+\subsection{Veröffentlichung bei crates.io}
+
+Das Paketeregister der Rust-Community, genannt crates.io, ist ein Ort für Bibliotheken, die von verschiedenen Programmierern aus der Community verwaltet werden. Eine Veröffentlichung ist permanent. Das heißt, dass keine Versionsnummern überschrieben werden können und somit der Code nicht gelöscht werden kann. Jedoch gibt es keine Begrenzung für die Anzahl der Versionen, die veröffentlicht werden können.
+
+Vor der Veröffentlichung wird ein Account benötigt. Dazu muss mit einem Github-Account auf crates.io ein API-Token generiert werden. Danach kann man sich über einen Befehl auf der Kommandozeile anmelden:
+
+\begin{lstlisting}
+    $ cargo login abcdefghijklmnopqrstuvwxyz012345
+\end{lstlisting}
+
+Dieser Token wird anschließend in einem lokalen Verzeichnis gespeichert und sollte nicht mit anderen geteilt werden. Erneute Generierung eines Tokens ist möglich.
+
+Mithilfe von Cargo werden eigene Bibliotheken paketiert, dabei entsteht eine *.crate-Datei im Unterverzeichnis target/package.
+
+\begin{lstlisting}
+    $ cargo package
+\end{lstlisting}
+
+Dabei ist zu beachten, dass es eine Beschränkung der Uploadgröße von 10 MB für *.crate-Dateien gibt. Um die Dateigröße einzuschränken, können Dateien exkludiert bzw. inkludiert werden, dazu stehen die Schlüsselwörter \glqq exclude\grqq{} (blacklisting) und \glqq include\grqq{} (whitelisting) in der Cargo.toml-Datei zur Verfügung:
+
+\begin{lstlisting}
+    [package]
+    # ...
+    exclude = [
+        "public/assets/*",
+        "videos/*",
+    ]
+\end{lstlisting}
+
+bzw.
+
+\begin{lstlisting}
+    [package]
+    # ...
+    include = [
+        "**/*.rs",
+        "Cargo.toml",
+    ]
+\end{lstlisting}
+
+Zu beachten ist, dass das Schlüsselwort \glqq include\grqq{}, wenn gesetzt, \glqq exclude\grqq{} überschreibt.
+
+Zum Hochladen muss nur noch folgender Befehl ausgeführt werden:
+
+\begin{lstlisting}
+    $ cargo publish
+\end{lstlisting}
+
+Dieser Befehl paketiert die Bibliothek automatisch, falls keine lokale crate-Datei gefunden wurde.
+
+Zum Veröffentlichen einer neuen Version muss lediglich die Versionsnummer in der Cargo.toml verändert werden.
+
+\subsubsection{Verwalten eines crate.io basierten Pakets}
+
+Die Verwaltung eines Pakets geschieht in Rust primär auf der Kommandozeilenebene mit Cargo.
+
+Wenn ein schwerwiegender Bug in einem bereits hochgeladenen Paket gefunden wurde, kann diese Version aus dem Index von crates.io entfernt, jedoch nicht gelöscht werden.
+
+\begin{lstlisting}
+    $ cargo yank --vers 1.0.1
+    $ cargo yank --vers 1.0.1 --undo    # undo the yank
+\end{lstlisting}
+
+Diese Pakete können immer noch heruntergeladen und in andere Projekte eingebunden werden, die bereits an \glqq yanked\grqq{} Pakete gebunden waren. Cargo lässt dies dies nicht bei neu erstellten Crates\footnote{Bibliothek oder Paket in Rust} zu.
+
+Ein Projekt wird meist von mehreren Entwicklern programmiert oder Besitzer des Projekts ändert sich im Laufe der Zeit. Folgende Befehle fügen neue Entwickler zu einem Projekt hinzu, welche dann in der Lage sind, auf crates.io zu veröffentlichen bzw. entfernen sie aus dem Projekt:
+
+\begin{lstlisting}
+    # "named" owner:
+    $ cargo owner --add my-buddy
+    $ cargo owner --remove my-buddy
+
+    # "team" owner:
+    # syntax: github:org:team
+    $ cargo owner --add github:rust-lang:owners
+    $ cargo owner --remove github:rust-lang:owners
+\end{lstlisting}
+
+Wenn ein Teamname angegeben wird, sind diese nicht befugt, neue \glqq owner\grqq{} hinzuzufügen. Die Befehle yank und publish sind Teams jedoch erlaubt. Ist ein \glqq named owner\grqq{} in einem Team, so sind alle Entwickler eines Teams als \glqq named owner\grqq{} eingestuft.
+
+\subsection{Externe Tools}
+
+Cargo versucht, die Integration von Tools von Drittanbietern zu vereinfachen, z.B. für IDEs oder anderen Build-Systemen. Dazu verfügt Cargo über mehrere Möglichkeiten:
+
+\begin{itemize}
+    \item cargo metadata-Befehl
+    \item message-format Argument
+    \item benutzerdefinierte Befehle
+\end{itemize}
+
+\subsubsection{Information über die Paketstruktur mit cargo metadata}
+
+\begin{lstlisting}
+    $ cargo metadata
+\end{lstlisting}
+
+Dieser Befehl gibt im JSON-Format alle Metadaten über ein Projekt aus. Darunter Befinden sich die Version des aktuellen Projekts sowie eine Liste der Pakete und Abhängigkeiten. Grobe Struktur:
+
+\begin{lstlisting}
+    {
+        "version": integer,
+        "packages": [ {
+            "id": PackageId,
+            "name": string,
+            "version": string,
+            "source": SourceId,
+            "dependencies": [ Dependency ],
+            "targets": [ Target ],
+            "manifest_path": string,
+        } ],
+        "workspace_members": [ PackageId ],
+        "resolve": {
+            "nodes": [ {
+                "id": PackageId,
+                "dependencies": [ PackageId ]
+            } ]
+        }
+    }
+\end{lstlisting}
+
+\subsubsection{Informationen beim Kompilieren}
+
+Mit dem Argument \glqq message-format\grqq{} können genauere Informationen beim Kompilieren herausgefiltert werden:
+
+\begin{lstlisting}
+    $ cargo build --message-format=json
+\end{lstlisting}
+
+Dadurch entsteht ein Output im JSON-Format mit Informationen über Compiler-Fehlermeldungen und -Warnungen, erzeugte Artefakte und das Ergebnis.
+
+\subsubsection{Benutzerdefinierte Befehle}
+
+Cargo ist so ausgelegt, dass es erweitert werden kann, ohne dass Cargo selbst modifiziert werden muss. Dazu muss ein Programm in der Form cargo-\textit{command} in einem der \$PATH-Verzeichnisse des Benutzers liegen. Anschließend kann es von Cargo aufgerufen werden mit \glqq cargo \textit{command}\grqq{}.Wenn ein solches Programm von Cargo aufgerufen wird, übergibt es, wie es üblich ist, als ersten Parameter den Programmnamen. Als zweites die Bezeichnung des Programms (\textit{command}). Alle weiteren Parameter in der Befehlszeile werden unverändert weitergeleitet.
+
+Beispiel:
+
+\begin{lstlisting}
+    // cargo-listargs
+    use std::env;
+
+    fn main() {
+        let args: Vec<_> = env::args().collect();
+        println!("{:?}", args);
+    }
+\end{lstlisting}
+
+Obiges Programm gibt eine Liste der Parameter aus, die übergeben wurden. Es könnte auch in C programmiert sein, entscheidend ist, dass der Programmname in der richtigen Form ist.
+
+\begin{lstlisting}
+    $ ./cargo-listargs arg1 arg2
+    # ["./cargo-listargs", "arg1", "arg2"]
+
+    $ cargo listargs arg1 arg2
+    # ["path/to/cargo-listargs", "listargs", "arg1", "arg2"]
+\end{lstlisting}
+
+Im Internet gibt es zum Zeitpunkt der Erstellung dieses Dokuments bereits über 40 benutzerdefinierte Befehle, die von der Rust-Community erstellt wurden. \cite{CargoSubcommands}
