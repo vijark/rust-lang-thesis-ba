@@ -1,0 +1,95 @@
+\chapter{Programmierung mit Rust und Unterschiede zu C/C++}
+
+In diesem Kapitel werden auf Unterschiede bei der Programmierung zwischen den Sprachen Rust und C/C++ eingegangen.
+
+
+\section{Grundlagen}
+
+Zu den Grundlagen einer jeden Programmiersprache gehört der Umgang mit Variablen und Datentypen, und Kommentarfunktionen. Kontrollstrukturen definieren die Reihenfolge, in der Berechnungen durchgeführt werden.
+
+\subsection{Variablen und Mutabilität}
+
+In Rust sind Variablen standardmäßig unveränderlich. Das ist einer von vielen Faktoren, die Programmierer helfen sollen, den Code so zu schreiben, dass die Sicherheit und Parallelität von Rust genutzt werden. \cite{RustBook}
+
+Ein Beispiel in Rust:
+
+\begin{lstlisting}
+    fn main() {
+        let x = 5;
+        println!("The value of x is {}", x);
+        x = 6;
+        println!("The value of x is {}", x);
+    }
+\end{lstlisting}
+
+Beim Kompilieren erscheint folgende Fehlermeldung:
+
+\begin{lstlisting}
+    error[E0384]: cannot assign twice to immutable variable 
+    `x`
+    --> src/main.rs:4:5
+     |
+   2 |     let x = 5;
+     |         -
+     |         |
+     |         first assignment to `x`
+     |         help: make this binding mutable: `mut x`
+   3 |     println!("The value of x is {}", x);
+   4 |     x = 6;
+     |     ^^^^^ cannot assign twice to immutable variable
+   
+\end{lstlisting}
+
+Das Beispiel zeigt, wie der Compiler dem Programmierer hilft, Fehler im Programm zu finden. Die Fehlermeldung weist darauf hin, dass die Fehlerursache darin liegt, dass auf eine unveränderliche Variable nicht ein zweites Mal zugewiesen werden darf.
+
+Bei C oder C++ ist jede Variablendefinition standardmäßig veränderlich, das heißt bei gleicher Vorangehensweise würde folgendes C-Programm ohne Fehlermeldungen übersetzen:
+
+\begin{lstlisting}
+    #include <stdio.h>
+
+    int main()
+    {
+        int x = 5;
+        printf("The value of x is %d\n", x);
+        x = 6;
+        printf("The value of x is %d\n", x);
+        return 0;
+    }    
+\end{lstlisting}
+
+Das Schlüsselwort \glqq const\grqq{} kann verwendet werden, um Variablen in C/C++ konstant zu definieren.
+
+\begin{lstlisting}
+    const int x = 5;
+\end{lstlisting}
+
+Wird in C versucht, eine konstant definierte Variable zu verändern, indem ein Wert mit einem nicht konstanten Typ verwendet wird, ist das Verhalten nicht definiert. \cite[p.~87]{ISO:9899:2017}
+
+Das Verhalten in Folgendem Beispiel ist somit nicht definiert:
+
+\begin{lstlisting}
+    #include <stdio.h>
+
+    int main()
+    {
+        const int x = 5;
+        printf("The value of x is %d\n", x);
+        *(int *)&x = 6;
+        printf("The value of x is %d\n", x);
+        return 0;
+    }
+\end{lstlisting}
+
+Ergebnis mit dem Clang Compiler in der Version 3.8.1-24 auf einem Debian System (keine Warnungen beim Kompilieren):
+
+\begin{lstlisting}
+    The value of x is 5
+    The value of x is 5
+\end{lstlisting}
+
+Ergebnis mit dem GCC Compiler in der Version 6.3.0 auf einem Debian System (auch hier keine Warnungen):
+
+\begin{lstlisting}
+    The value of x is 5
+    The value of x is 6
+\end{lstlisting}
