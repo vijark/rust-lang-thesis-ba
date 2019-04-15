@@ -80,16 +80,146 @@ Das Verhalten in Folgendem Beispiel ist somit nicht definiert:
     }
 \end{lstlisting}
 
-Ergebnis mit dem Clang Compiler in der Version 3.8.1-24 auf einem Debian System (keine Warnungen beim Kompilieren):
+Ergebnis mit dem Clang Compiler in der Version 7.0.1 auf einem Linux System (keine Warnungen beim Kompilieren):
 
 \begin{lstlisting}
     The value of x is 5
     The value of x is 5
 \end{lstlisting}
 
-Ergebnis mit dem GCC Compiler in der Version 6.3.0 auf einem Debian System (auch hier keine Warnungen):
+Ergebnis mit dem GCC Compiler in der Version 8.3.1 auf einem Linux System (auch hier keine Warnungen):
 
 \begin{lstlisting}
     The value of x is 5
     The value of x is 6
 \end{lstlisting}
+
+
+\subsection{Datentypen}
+
+Jede Variable in Rust hat einen bestimmten Datentyp. In Rust wird unterschieden zwischen skalaren und zusammengesetzten Typen. Rust ist eine statisch typisierte Sprache. Das bedeutet, dass die Typen aller Variablen zur Kompilierzeit bekannt sein müssen. Der Compiler kann normalerweise ableiten, welcher Typ verwenden soll, basierend auf dem Wert und wie er verwendet wird. In Fällen, in denen viele Typen möglich sind, z.B. wenn ein String in einen numerischen Typ konvertiert werden soll, muss eine Typanmerkung wie folgt hinzugefügt werden:
+
+\begin{lstlisting}
+    let guess: u32 = "42".parse().expect("Not a number!");
+\end{lstlisting}
+
+Ohne Angabe des Typs gibt der Rust-Compiler eine Fehlermeldung aus.
+
+\subsubsection{Integer Typ}
+
+Ein Integer ist ein Datentyp für ganze Zahlen. Der Typ \glqq u32\grqq{} gibt an, dass es sich um eine vorzeichenlose Ganzzahl handelt, vorzeichenbehaftete Ganzzahltypen beginnen mit \glqq i\grqq{} statt mit \glqq u\grqq{}. Due Zahl gibt an, wie viel Speicherplatz sie beansprucht. Folgende Tabelle zeigt die Integertypen von Rust und C:
+
+\begin{table}[htbp]
+\centering
+\begin{tabular}{|c||c|c||c|c|}
+\hline
+\rule[-1ex]{0pt}{2.5ex} & \multicolumn{2}{|c||}{Rust} & \multicolumn{2}{|c|}{C/C++} \\
+\hline
+\rule[-1ex]{0pt}{2.5ex} Länge & signed & unsigned & signed & unsigned \\
+\hline
+\rule[-1ex]{0pt}{2.5ex} 8-bit & i8 & u8 & \_\_int8\_t & \_\_uint8\_t \\
+\hline
+\rule[-1ex]{0pt}{2.5ex} 16-bit & i16 & u16 & \_\_int16\_t & \_\_uint16\_t \\
+\hline
+\rule[-1ex]{0pt}{2.5ex} 32-bit & i32 & u32 & \_\_int32\_t & \_\_uint32\_t \\
+\hline
+\rule[-1ex]{0pt}{2.5ex} 64-bit & i64 & u64 & \_\_int64\_t & \_\_uint64\_t \\
+\hline
+\rule[-1ex]{0pt}{2.5ex} 128-bit & i128 & u128 & \_\_int128\_t & \_\_uint128\_t \\
+\hline
+\rule[-1ex]{0pt}{2.5ex} arch & isize & usize & & \\
+\hline
+\end{tabular}
+\caption{Integertypen in Rust und C/C++}
+\end{table}
+
+Mit \glqq short\grqq{} und \glqq long\grqq{} sollen verschieden lange ganzzahlige Werte zur Ver\-fü\-gung stehen, soweit dies praktikabel ist; \glqq int\grqq{} wird normalerweise die natürliche Größe für eine bestimmte Maschine sein. \glqq short\grqq{} belegt oft 16 Bits, \glqq long\grqq{} 32 Bits und \glqq int\grqq{} entweder 16 oder 32 Bits. Es steht jedem Übersetzer frei, sinnvolle Größen für seine Maschine zu wählen, nur mit den Einschränkungen, dass \glqq short\grqq{} und \glqq int\grqq{} wenigstens 16 Bits haben, \glqq long\grqq{} mindestens 32 Bits, und dass \glqq short\grqq{} nicht länger als \glqq int\grqq{} und \glqq int\grqq{} nicht länger als \glqq long\grqq{} sein darf.
+
+Möglicher
+
+\begin{lstlisting}
+    printf("%zu\n", sizeof(char));      // 1:  8-bit
+    printf("%zu\n", sizeof(short));     // 2: 16-bit
+    printf("%zu\n", sizeof(int));       // 4: 32-bit
+    printf("%zu\n", sizeof(long));      // 8: 64-bit
+\end{lstlisting}
+
+In Rust hängen die Typen \glqq isize\grqq{} und \glqq usize\grqq{} von der Art des Computers ab, auf dem das Programm ausgeführt wird: 64 Bits bei 64-Bit-Architektur und 32 Bits bei 32-Bit-Architektur.
+
+In Rust wird standardmäßig der Integertyp i32 verwendet. Dieser Typ ist im Allgemein der schnellste Typ, auch auf 64-Bit-Systemen. Die Typen \glqq isize\grqq{} und \glqq usize\grqq{} können zum indexieren von Arrays verwendet werden.
+
+\subsubsection{Weitere Typen in Rust}
+
+\begin{itemize}
+    \item Fließkomma-Typen: \glqq f32\grqq{} und \glqq f64\grqq{} (Standard ist \glqq f64\grqq{})
+    \item Boolean: \glqq bool\grqq{} true / false
+    \item Zeichentyp \glqq char\grqq{}: Unicode, das heißt chinesische, japanische und koreanische Zeichen, Emoji, Leerzeichen mit Nullbreite sind möglich
+\end{itemize}
+
+\subsubsection{Tupel}
+
+Ein Tupel ist ein allgemeiner Weg, um einige andere Werte mit verschiedenen Typen zu einem Verbindungstyp zu gruppieren. Tupel haben eine feste Länge, das heißt sie können nicht größer oder kleiner werden nachdem sie deklariert wurden.
+
+\begin{lstlisting}
+    fn main() {
+        let tup: (i32, f64, u8) = (500, 6.4, 1);
+        let (x, y, z) = tup;
+        println!("The value of y is: {}", y);
+        println!("The value of z is: {}", tup.2);
+    }
+\end{lstlisting}
+
+\subsubsection{Arrays}
+
+Eine andere Möglichkeit, eine Sammlung mehrerer Werte zu haben, besteht in einem Array. Im Gegensatz zu einem Tupel muss jedes Element eines Arrays denselben Typ haben. Arrays in Rust unterscheiden sich von Arrays in einigen anderen Sprachen, da Arrays in Rust eine feste Länge haben, wie Tupel.
+
+In Rust werden die Werte, die in ein Array gehen, als durch Kommata getrennte Liste in eckiggen Klammern geschrieben:
+
+\begin{lstlisting}
+    let a = [1, 2, 3, 4, 5];
+\end{lstlisting}
+
+Arrays sind nützlich, um Daten auf dem Stack statt auf dem Heap zuweisen zu können oder um sicherzustellen, dass immer eine feste Anzahl von Elementen vorhanden sind. Ein Array ist jedoch nicht so flexibel wie der Vektortyp. Ein Vektor ist ein ähnlicher Auflistungstyp, der von der Standardbibliothek bereitgestellt wird und dessen Größe vergrößert oder verkleinert werden darf.
+
+Das Schreiben des Array-Typs erfolgt mit eckigen Klammern mit dem Typ der Element im Array gefolgt von einem Semikolon und die Anzahl der Elemente im Array:
+
+\begin{lstlisting}
+    let a: [i32; 5] = [1, 2, 3, 4, 5];
+\end{lstlisting}
+
+Eine ähnliche Schreibweise wird zum Initialisieren eines Arrays verwendet, das für jedes Element den selben Wert enthält. Dabei wird der Anfangswert, dann ein Semikolon und die Länge des Array angegeben:
+
+\begin{lstlisting}
+    let a = [3; 5];
+\end{lstlisting}
+
+Das Array mit dem Namen \glqq a\grqq{} enthält 5 Elemente, die zunächst alle auf den Wert 3 gesetzt sind. Folgender Ausdruck erzeugt das gleiche Array:
+
+\begin{lstlisting}
+    let a = [3, 3, 3, 3, 3];
+\end{lstlisting}
+
+Ein Array ist ein einzelner Speicherbereich, der auf dem Stack reserviert ist. Es kann mithilfe der Indexierung wiefolgt zugegriffen werden:
+
+\begin{lstlisting}
+    let a = [1, 2, 3, 4, 5];
+    let first = a[0];
+    let second = a[1];
+\end{lstlisting}
+
+Wird auf ein Element zugegriffen, das nicht innerhalb des Bereichs ist, beendet sich das Programm mit folgender Meldung:
+
+\begin{lstlisting}
+    thread 'main' panicked at 'index out of bounds: the len
+    is 5 but the index is 10', src/main.rs:5:13
+    note: Run with `RUST_BACKTRACE=1` environment variable to
+    display a backtrace.
+\end{lstlisting}
+
+Wenn in C oder C++ auf ein Element außerhalb des Bereichs eines Arrays zugegriffen wird, fällt dies beim Testen wesentlich weniger auf, da normalerweise das Programm weiter ausgeführt wird.
+
+Das ist ein Beispiel der Sicherheitsprinzipien von Rust. Viele Low-Level-Pro\-gram\-mier\-spra\-chen verzichten auf diesen Check, sodass ein ungültiger Speicherbereich indexiert werden kann. Rust verhindert dies durch sofortiges Beenden des Programms.
+
+\subsection{Funktionen}
+
+
