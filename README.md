@@ -13,8 +13,12 @@
         - Veröffentlichung bei crates.io
         - Externe Tools
 3. Programmierung mit Rust und Unterschiede zu C/C++
-    - Basics
-    - Typsystem und Ownership
+    - Grundlagen
+        - Variablen und Mutabilität
+        - Datentypen
+        - Funktionen
+        - Kontrollstrukturen
+    - Ownership
     - Klassen
     - Packages, Crates
     - Module

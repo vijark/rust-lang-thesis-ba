@@ -212,8 +212,8 @@ Wird auf ein Element zugegriffen, das nicht innerhalb des Bereichs ist, beendet 
 \begin{lstlisting}
     thread 'main' panicked at 'index out of bounds: the len
     is 5 but the index is 10', src/main.rs:5:13
-    note: Run with `RUST_BACKTRACE=1` environment variable to
-    display a backtrace.
+    note: Run with `RUST_BACKTRACE=1` environment variable
+    to display a backtrace.
 \end{lstlisting}
 
 Wenn in C oder C++ auf ein Element außerhalb des Bereichs eines Arrays zugegriffen wird, fällt dies beim Testen wesentlich weniger auf, da normalerweise das Programm weiter ausgeführt wird.
@@ -222,4 +222,143 @@ Das ist ein Beispiel der Sicherheitsprinzipien von Rust. Viele Low-Level-Pro\-gr
 
 \subsection{Funktionen}
 
+In Rust werden Funktionen und Variablennamen als Konvention in snake case geschrieben. Ein Programm, das eine Beispielfunktion enthält:
 
+\begin{lstlisting}
+    fn main() {
+        println!("Hello, world!");
+        another_function(42);
+    }
+    fn another_function(n: i32) {
+        println!("Another function with number {}.", n);
+    }
+\end{lstlisting}
+
+Eine Funktion mit Parameter enthält den Namen der Variable sowie den Typen mit einem Doppelpunkt getrennt. Bei mehreren Parametern werden diese durch Komma getrennt.
+
+Bei Funktionen mit Rückgabewerten muss am Ende des Funktionskörpers der Rückgabewert als Expression ohne Semikolon stehen. Wenn eine Funktion früh beendet werden soll, kann ein \glqq return\grqq{} mit Rückgabewert benutzt werden. Der Rückgabetyp der Funktion muss mit einem Pfeil($-$$>$) angegeben werden.
+
+\begin{lstlisting}
+    fn main() {
+        let result = add(12, 34);
+        println!("The result is {}.", result);
+    }
+    fn add(n1: i32, n2: i32) -> i32 {
+        n1 + n2
+    }
+\end{lstlisting}
+
+\subsection{Kontrollstrukturen}
+
+Kontrollstrukturen definieren die Reihenfolge, in der Berechnungen durchgeführt werden. Die Entscheidung, ob Code ausgeführt werden soll oder nicht, abhängig davon, ob eine Bedingung wahr ist, und die Entscheidung, wiederholt Code aus\-zu\-füh\-ren, während eine Bedingung wahr ist, sind grundlegende Bausteine in den meisten Programmiersprachen. Die häufigsten Konstrukte, mit denen der Ausführungsfluss von Rust-Code gesteuert werden kann, sind if-Ausdrücke und -Schleifen.
+
+
+\subsubsection{if-Anweisung}
+
+Mit if-else-Anweisungen werden Entscheidungen formuliert. Der else-Teil ist optional. Beispiel:
+
+\begin{lstlisting}
+    if number < 5 {
+        println!("condition was true");
+    } else {
+        println!("condition was false");
+    }
+\end{lstlisting}
+
+Diese Anweisungen sind syntaktisch wie in C oder C++, mit dem Unterschied, dass keine Klammern bei der Expression benötigt werden.
+
+In Rust muss der Typ der Expression ein Boolean sein. Folgendes Programm wird also nicht übersetzt:
+
+\begin{lstlisting}
+    fn main() {
+        let number = 3;
+        if number {                     // type must be bool
+            println!("number was three");
+        }
+    }
+\end{lstlisting}
+
+C und C++ prüfen bei einer if-Anweisung mit einem Integer Wert nur, ob dieser den Wert 0 hat. Da in Rust ein Boolean Typ benötigt wird, muss das Programm umgeschrieben werden:
+
+\begin{lstlisting}
+    fn main() {
+        let number = 3;
+        if number != 0 {
+            println!("number was something other than 0");
+        }
+    }
+\end{lstlisting}
+
+Mehrere Bedingungen können auch in Rust in einer \glqq else if\grqq{}-Anweisung behandelt werden:
+
+\begin{lstlisting}
+    let number = 6;
+
+    if number % 4 == 0 {
+        println!("number is divisible by 4");
+    } else if number % 3 == 0 {
+        println!("number is divisible by 3");
+    } else if number % 2 == 0 {
+        println!("number is divisible by 2");
+    } else {
+        println!("number is not divisible by 4, 3, or 2");
+    }
+\end{lstlisting}
+
+In Rust ist die if-Anweisung eine Expression, somit kann es verwendet werden, um z.B. Werte von Variablen zu definieren:
+
+\begin{lstlisting}
+    let condition = true;
+    let number = if condition {
+        5
+    } else {
+        6
+    };
+\end{lstlisting}
+
+Da Rust eine statisch typisierte Sprache ist, muss der Typ beim Kompilieren bekannt sein. Das heißt, dass bei letzteren if-Anweisung der Typ einheitlich sein muss. Im letzten Beispiel war \glqq number\grqq{} vom Typ \glqq i32\grqq{}.
+
+\subsubsection{Schleifen}
+
+Rust hat drei Arten von Schleifen: loop, while und for.
+
+Loop-Schleifen führen Code so oft aus, bis sie explizit gestoppt werden mit dem Schlüsselwort \glqq break\grqq{}. Schleifen können in Rust auch als Expression verwendet werden, wenn an dem \glqq break\grqq{} ein Wert angefügt wird:
+
+\begin{lstlisting}
+    fn main() {
+        let mut counter = 0;
+        let result = loop {
+            counter += 1;
+            if counter == 10 {
+                break counter * 2;      // loop returning 20
+            }
+        };
+        println!("The result is {}", result);
+    }
+\end{lstlisting}
+
+While-Schleifen gibt es auch in C und C++. Sie funktionieren auch in Rust entsprechend.
+
+\begin{lstlisting}
+    fn main() {
+        let a = [10, 20, 30, 40, 50];
+        let mut index = 0;
+        while index < 5 {
+            println!("the value is: {}", a[index]);
+            index = index + 1;
+        }
+    }
+\end{lstlisting}
+
+Das Programm gibt alle Werte aus dem Array aus. Alternativ kann hier mit einer for-Schleife gearbeitet werden. For-Schleifen funktionieren in Rust anders als in C oder C++, sie gleichen ehr einer for-each-Schleife aus Java. Das heißt, dass der Code für jedes Element aus einer Sammlung einmal ausgeführt wird.
+
+\begin{lstlisting}
+    fn main() {
+        let a = [10, 20, 30, 40, 50];
+        for element in a.iter() {
+            println!("the value is: {}", element);
+        }
+    }
+\end{lstlisting}
+
+Mit for-Schleifen kann in Rust die Sicherheit des Codes erhöht werden, da dadurch Zugriffe außerhalb eines Arrays verhindert werden.
