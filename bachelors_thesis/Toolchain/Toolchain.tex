@@ -71,7 +71,7 @@ Ein Lint ist ein Werkzeug, das zur Verbesserung des Quellcodes verwendet wird. D
       = note: #[warn(unused_variables)] on by default
 \end{lstlisting}
 
-Das ist das \glqq unused\_variables\grqq{} Lint. Es besagt, dass eine Variable eingeführt wurde, die nicht im Code verwendet wurde. Dies ist nicht falsch, es könnte jedoch ein Bug sein.
+Das ist das \verb"unused_variables" Lint. Es besagt, dass eine Variable eingeführt wurde, die nicht im Code verwendet wurde. Dies ist nicht falsch, es könnte jedoch ein Bug sein.
 
 
 \section{Cargo}
@@ -108,7 +108,7 @@ Die Cargo.toml enthält alle wichtigen Metainformationen, die Cargo zum Kompilie
     [dependencies]    
 \end{lstlisting}
 
-Die Informationen über den Author enthält Cargo von den Umgebungsvariablen CARGO\_NAME und CARGO\_EMAIL. In Rust gibt es sogenannte editions, welche in der Regel in einem zeitlichen Abstand von zwei oder drei Jahren veröffentlicht werden und, ähnlich wie in C, einen Standard festlegen. Zum Zeitpunkt der Erstellung dieser Arbeit gibt es zwei Editionen: 2015 und 2018. Das Pendant in C wären die C-Standards wie z.B. C90, C99 oder C11.
+Die Informationen über den Author enthält Cargo von den Umgebungsvariablen \verb"CARGO_NAME" und \verb"CARGO_EMAIL". In Rust gibt es sogenannte editions, welche in der Regel in einem zeitlichen Abstand von zwei oder drei Jahren veröffentlicht werden und, ähnlich wie in C, einen Standard festlegen. Zum Zeitpunkt der Erstellung dieser Arbeit gibt es zwei Editionen: 2015 und 2018. Das Pendant in C wären die C-Standards wie z.B. C90, C99 oder C11.
 
 Zudem können hier zusätzliche Bibliotheken angegeben werden, die Cargo automatisch von crates.io herunterlädt in in das Projekt einbindet. Cargo erstellt für genauere Informationen der Abhängigkeiten eine Datei Cargo.lock, diese sollte nicht manuell verändert werden, da sie von Cargo gepflegt wird. Mithilfe von Cargo können Tests gestartet werden, genauere Information dazu sind aus Kapitel 3.6 zu entnehmen.
 
@@ -174,7 +174,7 @@ Mithilfe von Cargo werden eigene Bibliotheken paketiert, dabei entsteht eine *.c
     $ cargo package
 \end{lstlisting}
 
-Dabei ist zu beachten, dass es eine Beschränkung der Uploadgröße von 10 MB für *.crate-Dateien gibt. Um die Dateigröße einzuschränken, können Dateien exkludiert bzw. inkludiert werden, dazu stehen die Schlüsselwörter \glqq exclude\grqq{} (blacklisting) und \glqq include\grqq{} (whitelisting) in der Cargo.toml-Datei zur Verfügung:
+Dabei ist zu beachten, dass es eine Beschränkung der Uploadgröße von 10 MB für *.crate-Dateien gibt. Um die Dateigröße einzuschränken, können Dateien exkludiert bzw. inkludiert werden, dazu stehen die Schlüsselwörter \verb"exclude" (blacklisting) und \verb"include" (whitelisting) in der Cargo.toml-Datei zur Verfügung:
 
 \begin{lstlisting}
     [package]
@@ -196,7 +196,7 @@ bzw.
     ]
 \end{lstlisting}
 
-Zu beachten ist, dass das Schlüsselwort \glqq include\grqq{}, wenn gesetzt, \glqq exclude\grqq{} überschreibt.
+Zu beachten ist, dass das Schlüsselwort \verb"include", wenn gesetzt, \verb"exclude" überschreibt.
 
 Zum Hochladen muss nur noch folgender Befehl ausgeführt werden:
 
@@ -278,7 +278,7 @@ Dieser Befehl gibt im JSON-Format alle Metadaten über ein Projekt aus. Darunter
 
 \subsubsection{Informationen beim Kompilieren}
 
-Mit dem Argument \glqq message-format\grqq{} können genauere Informationen beim Kompilieren herausgefiltert werden:
+Mit dem Argument \verb"--message-format=json" können genauere Informationen beim Kompilieren herausgefiltert werden:
 
 \begin{lstlisting}
     $ cargo build --message-format=json
@@ -288,7 +288,7 @@ Dadurch entsteht ein Output im JSON-Format mit Informationen über Compiler-Fehl
 
 \subsubsection{Benutzerdefinierte Befehle}
 
-Cargo ist so ausgelegt, dass es erweitert werden kann, ohne dass Cargo selbst modifiziert werden muss. Dazu muss ein Programm in der Form cargo-\textit{command} in einem der \$PATH-Verzeichnisse des Benutzers liegen. Anschließend kann es von Cargo aufgerufen werden mit \glqq cargo \textit{command}\grqq{}.Wenn ein solches Programm von Cargo aufgerufen wird, übergibt es, wie es üblich ist, als ersten Parameter den Programmnamen. Als zweites die Bezeichnung des Programms (\textit{command}). Alle weiteren Parameter in der Befehlszeile werden unverändert weitergeleitet.
+Cargo ist so ausgelegt, dass es erweitert werden kann, ohne dass Cargo selbst modifiziert werden muss. Dazu muss ein Programm in der Form cargo-\textit{command} in einem der \verb"$PATH"-Verzeichnisse des Benutzers liegen. Anschließend kann es von Cargo aufgerufen werden mit \glqq cargo \textit{command}\grqq{}.Wenn ein solches Programm von Cargo aufgerufen wird, übergibt es, wie es üblich ist, als ersten Parameter den Programmnamen. Als zweites die Bezeichnung des Programms (\textit{command}). Alle weiteren Parameter in der Befehlszeile werden unverändert weitergeleitet.
 
 Beispiel:
 

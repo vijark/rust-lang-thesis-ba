@@ -19,6 +19,7 @@
         - Funktionen
         - Kontrollstrukturen
     - Ownership
+        - Funktionweise von Ownership
     - Klassen
     - Packages, Crates
     - Module

@@ -57,7 +57,7 @@ Bei C oder C++ ist jede Variablendefinition standardmäßig veränderlich, das h
     }    
 \end{lstlisting}
 
-Das Schlüsselwort \glqq const\grqq{} kann verwendet werden, um Variablen in C/C++ konstant zu definieren.
+Das Schlüsselwort \verb"const" kann verwendet werden, um Variablen in C/C++ konstant zu definieren.
 
 \begin{lstlisting}
     const int x = 5;
@@ -94,8 +94,7 @@ Ergebnis mit dem GCC Compiler in der Version 8.3.1 auf einem Linux System (auch 
     The value of x is 6
 \end{lstlisting}
 
-
-\subsection{Datentypen}
+\subsection{Datentypen}\label{chap:datatypes}
 
 Jede Variable in Rust hat einen bestimmten Datentyp. In Rust wird unterschieden zwischen skalaren und zusammengesetzten Typen. Rust ist eine statisch typisierte Sprache. Das bedeutet, dass die Typen aller Variablen zur Kompilierzeit bekannt sein müssen. Der Compiler kann normalerweise ableiten, welcher Typ verwenden soll, basierend auf dem Wert und wie er verwendet wird. In Fällen, in denen viele Typen möglich sind, z.B. wenn ein String in einen numerischen Typ konvertiert werden soll, muss eine Typanmerkung wie folgt hinzugefügt werden:
 
@@ -107,7 +106,7 @@ Ohne Angabe des Typs gibt der Rust-Compiler eine Fehlermeldung aus.
 
 \subsubsection{Integer Typ}
 
-Ein Integer ist ein Datentyp für ganze Zahlen. Der Typ \glqq u32\grqq{} gibt an, dass es sich um eine vorzeichenlose Ganzzahl handelt, vorzeichenbehaftete Ganzzahltypen beginnen mit \glqq i\grqq{} statt mit \glqq u\grqq{}. Due Zahl gibt an, wie viel Speicherplatz sie beansprucht. Folgende Tabelle zeigt die Integertypen von Rust und C:
+Ein Integer ist ein Datentyp für ganze Zahlen. Der Typ \verb"u32" gibt an, dass es sich um eine vorzeichenlose Ganzzahl handelt, vorzeichenbehaftete Ganzzahltypen beginnen mit \glqq i\grqq{} an Stelle von \glqq u\grqq{}. Due Zahl gibt an, wie viel Speicherplatz sie beansprucht. Folgende Tabelle zeigt die Integertypen von Rust und C:
 
 \begin{table}[htbp]
 \centering
@@ -133,7 +132,7 @@ Ein Integer ist ein Datentyp für ganze Zahlen. Der Typ \glqq u32\grqq{} gibt an
 \caption{Integertypen in Rust und C/C++}
 \end{table}
 
-Mit \glqq short\grqq{} und \glqq long\grqq{} sollen verschieden lange ganzzahlige Werte zur Ver\-fü\-gung stehen, soweit dies praktikabel ist; \glqq int\grqq{} wird normalerweise die natürliche Größe für eine bestimmte Maschine sein. \glqq short\grqq{} belegt oft 16 Bits, \glqq long\grqq{} 32 Bits und \glqq int\grqq{} entweder 16 oder 32 Bits. Es steht jedem Übersetzer frei, sinnvolle Größen für seine Maschine zu wählen, nur mit den Einschränkungen, dass \glqq short\grqq{} und \glqq int\grqq{} wenigstens 16 Bits haben, \glqq long\grqq{} mindestens 32 Bits, und dass \glqq short\grqq{} nicht länger als \glqq int\grqq{} und \glqq int\grqq{} nicht länger als \glqq long\grqq{} sein darf.
+Mit \verb"short" und \verb"long" sollen verschieden lange ganzzahlige Werte zur Verfügung stehen, soweit dies praktikabel ist; \verb"int" wird normalerweise die natürliche Größe für eine bestimmte Maschine sein. \verb"short" belegt oft 16 Bits, \verb"long" 32 Bits und \verb"int" entweder 16 oder 32 Bits. Es steht jedem Übersetzer frei, sinnvolle Größen für seine Maschine zu wählen, nur mit den Einschränkungen, dass \verb"short" und \verb"int" wenigstens 16 Bits haben, \verb"long" mindestens 32 Bits, und dass \verb"short" nicht länger als \verb"int" und \verb"int" nicht länger als \verb"long" sein darf. \cite{ProgInC}
 
 Beispiel:
 
@@ -144,16 +143,16 @@ Beispiel:
     printf("%zu\n", sizeof(long));      // 8: 64-bit
 \end{lstlisting}
 
-In Rust hängen die Typen \glqq isize\grqq{} und \glqq usize\grqq{} von der Art des Computers ab, auf dem das Programm ausgeführt wird: 64 Bits bei 64-Bit-Architektur und 32 Bits bei 32-Bit-Architektur.
+In Rust hängen die Typen \verb"isize" und \verb"usize" von der Art des Computers ab, auf dem das Programm ausgeführt wird: 64 Bits bei 64-Bit-Architektur und 32 Bits bei 32-Bit-Architektur.
 
-In Rust wird standardmäßig der Integertyp i32 verwendet. Dieser Typ ist im Allgemein der schnellste Typ, auch auf 64-Bit-Systemen. Die Typen \glqq isize\grqq{} und \glqq usize\grqq{} können zum indexieren von Arrays verwendet werden.
+In Rust wird standardmäßig der Integertyp i32 verwendet. Dieser Typ ist im Allgemein der schnellste Typ, auch auf 64-Bit-Systemen. Die Typen \verb"isize" und \verb"usize" können zum indexieren von Arrays verwendet werden.
 
 \subsubsection{Weitere Typen in Rust}
 
 \begin{itemize}
-    \item Fließkomma-Typen: \glqq f32\grqq{} und \glqq f64\grqq{} (Standard ist \glqq f64\grqq{})
-    \item Boolean: \glqq bool\grqq{} true / false
-    \item Zeichentyp \glqq char\grqq{}: Unicode, das heißt chinesische, japanische und koreanische Zeichen, Emoji, Leerzeichen mit Nullbreite sind möglich
+    \item Fließkomma-Typen: \verb"f32" und \verb"f64" (Standard ist \verb"f64")
+    \item Boolean: \verb"bool" true / false
+    \item Zeichentyp \verb"char": Unicode, das heißt chinesische, japanische und koreanische Zeichen, Emoji, Leerzeichen mit Nullbreite sind möglich
 \end{itemize}
 
 \subsubsection{Tupel}
@@ -236,7 +235,7 @@ In Rust werden Funktionen und Variablennamen als Konvention in snake case geschr
 
 Eine Funktion mit Parameter enthält den Namen der Variable sowie den Typen mit einem Doppelpunkt getrennt. Bei mehreren Parametern werden diese durch Komma getrennt.
 
-Bei Funktionen mit Rückgabewerten muss am Ende des Funktionskörpers der Rückgabewert als Expression ohne Semikolon stehen. Wenn eine Funktion früh beendet werden soll, kann ein \glqq return\grqq{} mit Rückgabewert benutzt werden. Der Rückgabetyp der Funktion muss mit einem Pfeil($-$$>$) angegeben werden.
+Bei Funktionen mit Rückgabewerten muss am Ende des Funktionskörpers der Rückgabewert als Expression ohne Semikolon stehen. Wenn eine Funktion früh beendet werden soll, kann ein \verb"return" mit Rückgabewert benutzt werden. Der Rückgabetyp der Funktion muss mit einem Pfeil(\verb"->") angegeben werden.
 
 \begin{lstlisting}
     fn main() {
@@ -250,12 +249,11 @@ Bei Funktionen mit Rückgabewerten muss am Ende des Funktionskörpers der Rückg
 
 \subsection{Kontrollstrukturen}
 
-Kontrollstrukturen definieren die Reihenfolge, in der Berechnungen durchgeführt werden. Die Entscheidung, ob Code ausgeführt werden soll oder nicht, abhängig davon, ob eine Bedingung wahr ist, und die Entscheidung, wiederholt Code aus\-zu\-füh\-ren, während eine Bedingung wahr ist, sind grundlegende Bausteine in den meisten Programmiersprachen. Die häufigsten Konstrukte, mit denen der Ausführungsfluss von Rust-Code gesteuert werden kann, sind if-Ausdrücke und -Schleifen.
+Kontrollstrukturen definieren die Reihenfolge, in der Berechnungen durchgeführt werden. Die Entscheidung, ob Code ausgeführt werden soll oder nicht, abhängig davon, ob eine Bedingung wahr ist, und die Entscheidung, wiederholt Code aus\-zu\-füh\-ren, während eine Bedingung wahr ist, sind grundlegende Bausteine in den meisten Programmiersprachen. Die häufigsten Konstrukte, mit denen der Ausführungsfluss von Rust-Code gesteuert werden kann, sind \verb"if"-Ausdrücke und -Schleifen.
 
+\subsubsection{\texttt{if}-Anweisungen}
 
-\subsubsection{if-Anweisung}
-
-Mit if-else-Anweisungen werden Entscheidungen formuliert. Der else-Teil ist optional. Beispiel:
+Mit \verb"if"-\verb"else"-Anweisungen werden Entscheidungen formuliert. Der else-Teil ist optional. Beispiel:
 
 \begin{lstlisting}
     if number < 5 {
@@ -278,7 +276,7 @@ In Rust muss der Typ der Expression ein Boolean sein. Folgendes Programm wird al
     }
 \end{lstlisting}
 
-C und C++ prüfen bei einer if-Anweisung mit einem Integer Wert nur, ob dieser den Wert 0 hat. Da in Rust ein Boolean Typ benötigt wird, muss das Programm umgeschrieben werden:
+C und C++ prüfen bei einer \verb"if"-Anweisung mit einem Integer Wert nur, ob dieser den Wert 0 hat. Da in Rust ein Boolean Typ benötigt wird, muss das Programm umgeschrieben werden:
 
 \begin{lstlisting}
     fn main() {
@@ -289,7 +287,7 @@ C und C++ prüfen bei einer if-Anweisung mit einem Integer Wert nur, ob dieser d
     }
 \end{lstlisting}
 
-Mehrere Bedingungen können auch in Rust in einer \glqq else if\grqq{}-Anweisung behandelt werden:
+Mehrere Bedingungen können auch in Rust in einer \verb"else if"-Anweisung behandelt werden:
 
 \begin{lstlisting}
     let number = 6;
@@ -305,7 +303,7 @@ Mehrere Bedingungen können auch in Rust in einer \glqq else if\grqq{}-Anweisung
     }
 \end{lstlisting}
 
-In Rust ist die if-Anweisung eine Expression, somit kann es verwendet werden, um z.B. Werte von Variablen zu definieren:
+In Rust ist die \verb"if"-Anweisung eine Expression, somit kann es verwendet werden, um z.B. Werte von Variablen zu definieren:
 
 \begin{lstlisting}
     let condition = true;
@@ -316,13 +314,13 @@ In Rust ist die if-Anweisung eine Expression, somit kann es verwendet werden, um
     };
 \end{lstlisting}
 
-Da Rust eine statisch typisierte Sprache ist, muss der Typ beim Kompilieren bekannt sein. Das heißt, dass bei letzteren if-Anweisung der Typ einheitlich sein muss. Im letzten Beispiel war \glqq number\grqq{} vom Typ \glqq i32\grqq{}.
+Da Rust eine statisch typisierte Sprache ist, muss der Typ beim Kompilieren bekannt sein. Das heißt, dass bei letzteren \verb"if"-Anweisung der Typ einheitlich sein muss. Im letzten Beispiel war \verb"number" vom Typ \verb"i32".
 
 \subsubsection{Schleifen}
 
 Rust hat drei Arten von Schleifen: loop, while und for.
 
-Loop-Schleifen führen Code so oft aus, bis sie explizit gestoppt werden mit dem Schlüsselwort \glqq break\grqq{}. Schleifen können in Rust auch als Expression verwendet werden, wenn an dem \glqq break\grqq{} ein Wert angefügt wird:
+Loop-Schleifen führen Code so oft aus, bis sie explizit gestoppt werden mit dem Schlüsselwort \verb"break". Schleifen können in Rust auch als Expression verwendet werden, wenn an dem \verb"break" ein Wert angefügt wird:
 
 \begin{lstlisting}
     fn main() {
@@ -337,7 +335,7 @@ Loop-Schleifen führen Code so oft aus, bis sie explizit gestoppt werden mit dem
     }
 \end{lstlisting}
 
-While-Schleifen gibt es auch in C und C++. Sie funktionieren auch in Rust entsprechend.
+\verb"while"-Schleifen gibt es auch in C und C++. Sie funktionieren auch in Rust entsprechend.
 
 \begin{lstlisting}
     fn main() {
@@ -350,7 +348,7 @@ While-Schleifen gibt es auch in C und C++. Sie funktionieren auch in Rust entspr
     }
 \end{lstlisting}
 
-Das Programm gibt alle Werte aus dem Array aus. Alternativ kann hier mit einer for-Schleife gearbeitet werden. For-Schleifen funktionieren in Rust anders als in C oder C++, sie gleichen ehr einer for-each-Schleife aus Java. Das heißt, dass der Code für jedes Element aus einer Sammlung einmal ausgeführt wird.
+Das Programm gibt alle Werte aus dem Array aus. Alternativ kann hier mit einer \verb"for"-Schleife gearbeitet werden. For-Schleifen funktionieren in Rust anders als in C oder C++, sie gleichen ehr einer \verb"for"-\verb"each"-Schleife aus Java. Das heißt, dass der Code für jedes Element aus einer Sammlung einmal ausgeführt wird.
 
 \begin{lstlisting}
     fn main() {
@@ -361,4 +359,241 @@ Das Programm gibt alle Werte aus dem Array aus. Alternativ kann hier mit einer f
     }
 \end{lstlisting}
 
-Mit for-Schleifen kann in Rust die Sicherheit des Codes erhöht werden, da dadurch Zugriffe außerhalb eines Arrays verhindert werden.
+Mit \verb"for"-Schleifen kann in Rust die Sicherheit des Codes erhöht werden, da dadurch Zugriffe außerhalb eines Arrays verhindert werden.
+
+
+\section{Ownership}
+
+Ownership ist ein einzigartiges Merkmal von Rust. Es ermöglicht Speichersicherheit ohne die Notwendigkeit eines Garbage Collectors. Daher ist es wichtig, das Ownership-Prinzip als Programmierer zu verstehen. In diesem Kapitel wird Ownership und damit zusammenhängende Eigenschaften wie Borrowing, Slices und wie Rust Daten im Arbeitsspeicher ablegt beschrieben.
+
+\subsection{Funktionsweise von Ownership}
+
+Alle Computerprogramme müssen Arbeitsspeichermanagement betreiben. Man\-che Sprachen benutzen einen Garbage Collector, welcher währen der Programmlaufzeit nach nicht mehr benutzten Speicher sucht und diesen frei gibt. In andern Sprachen muss der Programmierer explizit Speicher zuweisen und freigeben. Rust geht anders vor: Speicher wird durch ein System von Besitz und einen Satz an Regeln gestützt, welches der Compiler zur Kompilierzeit überprüft, sodass das Programm zur Laufzeit nicht gebremst wird.
+
+\subsubsection{Regeln}
+
+\begin{itemize}
+    \item Jeder Wert in Rust hat eine Variable, die als Eigentümer bezeichnet wird.
+    \item Es kann immer nur ein Besitzer gleichzeitig sein.
+    \item Wenn der Besitzer den Gültigkeitsbereich verlässt, wird der Wert gelöscht.
+\end{itemize}
+
+\subsubsection{Beispiel: String}
+
+Um die Eigentumsregeln zu veranschaulichen, ist ein komplexerer Datentyp not\-wen\-dig als die, die in \autoref{chap:datatypes} behandelt wurden, denn diese werden auf dem Stack gespeichert. In diesem Beispiel sollen Daten, die auf dem Heap gespeichert werden, betrachtet werden um zu veranschaulichen, wie Rust weiß, wann diese Daten zu bereinigen sind. Hierfür wird im Folgenden der Typ \verb"String" verwendet. Diese Aspekte gelten auch für andere komplexe Datentypen, die von der Standardbibliothek bereitgestellt werden.
+
+Wenn ein Rust-Programm eine Eingabe von einem Benutzer speichern möchte, muss ein Datentyp verwendet werden, welche eine variable Länge haben kann. Einen solchen String kann man in Rust zum Beispiel mit der \verb"from"-Funktion erstellen:
+
+\begin{lstlisting}
+    let mut s = String::from("hello");
+    s.push_str(", world!");             // appends a literal
+    println!("{}", s);                  // 'hello, world!'
+\end{lstlisting}
+
+Um einen veränderlichen String zu erzeugen, muss Speicherplatz auf dem Heap zugewiesen werden, welcher zu Kompilierzeit unbekannt ist. Das heißt:
+
+\begin{enumerate}
+    \item Speicherplatz muss vom Betriebssystem zur Laufzeit bereitgestellt werden.
+    \item Der Speicherplatz muss wieder freigegeben werden, wenn der String nicht mehr benötigt wird.
+\end{enumerate}
+
+Der erste Teil wird manuell vom Programmierer initiiert, beim Aufruf von \verb"String::from".
+
+Der zweite Teil geschieht automatisch (durch die Methode \verb"drop"), sobald die Variable, die es besitzt, den Gültigkeitsbereich verlässt, zum Beispiel am Ende des Blocks.
+
+\begin{lstlisting}
+    {
+        let s = String::from("hello");
+        // s is valid from this point forward
+    
+        // doo stuff with s
+    }                    // this scope is neo over, and s is
+                         // no longer valid
+\end{lstlisting}
+
+In C++ wird dieses Muster der Freigabe von Ressourcen am Ende der Lebensdauer eines Elements manchmal als \textit{Ressourcenbelegung ist Initialisierung (Resource Acquisition Is Initialization, kurz RAII)} bezeichnet. \cite[p.~71]{CppProg}
+
+Dieses Muster hat einen tiefgründigen Einfluss auf die Schreibweise von Rust-Code. Es mag einfach erscheinen, aber das Verhalten von Code kann in komplizierten Situationen unerwartet sein, wenn mehrere Variablen die Daten verwenden sollen, die auf dem Heap zugewiesen wurden.
+
+\subsubsection{Variablen und Daten: Move}
+
+Mehrere Variablen können in Rust auf unterschiedliche Weise mit denselben Daten interagieren. Ein Beispiel mit Integer:
+
+\begin{lstlisting}
+    let x = 5;
+    let y = x;
+\end{lstlisting}
+
+Hier wird der Wert 5 an die Variable \verb"x" gebunden und anschließend eine Kopie von \verb"x" an die Variable \verb"y" gebunden. Denn Integer haben eine feste Größe im Speicher und können auf dem Stack gespeichert werden.
+
+Beispiel mit String:
+
+\begin{lstlisting}
+    let s1 = String::from("hello");
+    let s2 = s1;
+\end{lstlisting}
+
+Dies sieht dem vorherigen Code sehr ähnlich, aber die Funktionsweise ist nicht dieselbe, denn Strings werden in Rust im Heap gespeichert.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.9]{Programmierung/Tabelle1.pdf}
+    \caption{Repräsentation des Speichers eines String}
+    \label{fig:tabelle1}
+\end{figure}
+
+\autoref{fig:tabelle1} zeigt die Bestandteile von String. Er besteht aus drei Teilen, zu sehen in der linken Tabelle: einen Pointer auf den Speicher, der den String enthält, die Länge und die Kapazität. Diese Datengruppe wird auf dem Stack gespeichert. Auf der rechten Seite befindet sich der Speicher auf dem Heap, der den Inhalt enthält.
+
+Bei der Zuweisung von \verb"s1" zu \verb"s2" werden nur die String-Daten kopiert, das heißt der Pointer, die Länge und die Kapazität, welche sich auf dem Stack befinden. Die Daten des Heaps werden nicht kopiert.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.9]{Programmierung/Tabelle2.pdf}
+    \caption{Repräsentation des Speichers eines String: Kopie auf dem Stack}
+    \label{fig:tabelle2}
+\end{figure}
+
+Wenn Rust eine vollständige Kopie gemacht hätte, würden die Daten wie auf \autoref{fig:tabelle3} aussehen. Und die Operation \verb"s2 = s1" kann hinsichtlich der Lauf\-zeit\-leis\-tung sehr euer sein, wenn die Daten auf dem Heap groß wären.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.9]{Programmierung/Tabelle3.pdf}
+    \caption{Repräsentation des Speichers eines String: Vollständige Kopie}
+    \label{fig:tabelle3}
+\end{figure}
+
+Sobald eine Variable außerhalb des Gültigkeitsbereichs gelangt, wird der Spei\-cher aus dem Heap gelöscht. Aber da \autoref{fig:tabelle2} zwei Variablen zeigt, die auf den selben Speicherbereich im Heap zeigen, würde zwei mal der Speicherbereich freigegeben werden. Das ist bekannt als \glqq double free\grqq{}-Error und kann zu Speicherbeschädigungen und möglicherweise zu Sicherheitsanfälligkeiten führen.
+
+Um die Speichersicherheit zu gewährleisten, hält Rust \verb"s1" für ungültig und muss somit nichts löschen, wenn \verb"s1" den Gültigkeitsbereich verlässt.
+
+Das hat zu Folge, dass \verb"s1" nicht mehr genutzt werden kann, nachdem es \verb"s2" zugewiesen wurde:
+
+\begin{lstlisting}
+    let s1 = String::From("hello");
+    let s2 = s1;
+
+    println!("{}, world!", s1);
+\end{lstlisting}
+
+Daraus entsteht folgende Fehlermeldung:
+
+
+\begin{lstlisting}
+    error[E0382]: borrow of moved value: `s1`
+     --> src/main.rs:5:28
+      |
+    3 |     let s1 = String::from("hello");
+      |         -- move occurs because `s1` has type
+    `std::string::String`, which does not implement the
+    `Copy` trait
+    4 |     let s2 = s1;
+      |              -- value moved here
+    5 |     println!("{}, world!", s1);
+      |                            ^^ value borrowed here
+    after move
+\end{lstlisting}
+
+Diese Art von Kopieren, welche die erste Variable ungültig macht, nennt man in Rust \glqq move\grqq{} (\verb"s1" was \textit{moved} into \verb"s2"). Was also tatsächlich passiert, wird in \autoref{fig:tabelle4} dargestellt.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.9]{Programmierung/Tabelle4.pdf}
+    \caption{Repräsentation des Speichers eines String: Moved}
+    \label{fig:tabelle4}
+\end{figure}
+
+Somit gibt es keinen \glqq double free\grqq{}-Error, da der Speicher nur einmal freigegeben wird, wenn \verb"s2" den Gültigkeitsbereich verlässt.
+
+\subsubsection{Variablen und Daten: Clone}
+
+Wenn eine vollständige Kopie erstellt werden soll, kann die Methode \verb"clone" benutzt werden. Beispiel:
+
+\begin{lstlisting}
+    let s1 = String::from("hello");
+    let s2 = s1.clone();
+
+    println!("s1 = {}, s2 = {}", s1, s2);
+\end{lstlisting}
+
+Der Code kompiliert ohne Fehlermeldungen und erzeugt explizit das in \autoref{fig:tabelle3} gezeigte Verhalten, bei dem die Heap-Daten kopiert werden.
+
+\subsubsection{Stack-Only-Daten kopieren}
+
+Primitive Datentypen, die komplett auf dem Stack gespeichert sind, können nicht übergeben werden (Move nicht möglich), sie können nur vollständige kopiert werden. Darum würde folgender Code ohne Fehler übersetzen:
+
+\begin{lstlisting}
+    let x = 5;
+    let y = x;
+
+    println!("x = {}, y = {}", x, y);
+\end{lstlisting}
+
+Integer besitzen eine feste Speichergröße zur Kompilierzeit. Es macht keinen Unterschied, sie mit \verb"clone" zu kopieren. Wenn ein Typ den \verb"Copy"-Trait besitzt, kann die erste Variable nach der Zuweisung weiter verwendet werden. In der Regel kann jede Gruppe einfacher Skalarwerte über den Stack vollständig kopiert werden. Einige der Typen sind:
+
+\begin{itemize}
+    \item Alle Integer-Typen, z.B. \verb"u32"
+    \item Boolean-Typ, \verb"bool" mit den Werten \verb"true" und \verb"false"
+    \item Alle Fließkommazahlen wie z.B. \verb"f64"
+    \item Zeichentyp \verb"char"
+    \item Tupel, wenn sie nur Typen beinhalten, die den \verb"Copy"-Trait implementieren z.B. \verb"(i32, i32)", jedoch nicht \verb"(i32, String)"
+\end{itemize}
+
+\subsubsection{Ownership und Funktionen}
+
+Die Semantik für die Übergabe eines Wertes an eine Funktion ähnelt derjenigen, die einer Variablen einen Wert zuweist. Das Übergeben einer Variablen an einer Funktion wird genauso wie die Zuweisung verschoben oder kopiert. Folgendes Programm enthält ein Beispiel mit einigen Anmerkungen, die zeigen, wo Variablen in den Geltungsbereich gelangen und aus diesem Bereich herauskommen:
+
+\begin{lstlisting}
+    fn main() {
+        let s = String::from("hello");  // s comes
+                                        // into scope
+        takes_ownership(s);         // s's value moved into
+                                    // the function...
+        // ... and is no longer valid here
+
+        let x = 5;         // x comes into scope
+
+        makes_copy(x);     // x would move into the function
+                           // but i32 is Copy, so it's okay
+                           // to still use x afterward
+
+    } // Here, x goes out of scope, then s. But because s's
+      // value was moved, nothing special happens.
+
+
+    fn takes_ownership(some_string: String) {
+        // some_string comes into scope
+
+        println!("{}", some_string);
+    } // Here, some_string goes out of scope and 'drop' is
+      // called. The backing memory is freed.
+
+
+    fn makes_copy(some_integer: i32) {
+        // some_integer comes into scope
+
+        println!("{}", some_integer);
+    } // Here, some_integer goes out of scope. Nothing
+      // special happens.
+\end{lstlisting}
+
+Wenn \verb"s" nach der Methode \verb"takes_ownership" genutzt wird, würde Rust einen Fehler bei der Kompilierung ausgeben. Diese statischen Checks sollen Fehler im Programm verhindern.
+
+Funktionen können auch Ownership durch einen Rückgabewert wieder zu\-rück\-ge\-ben:
+
+\begin{lstlisting}
+    fn main() {
+        let s1 = gives_ownership();
+        let s2 = takes_and_gives_back(s1);
+        println!("{}, world!", s1); // error
+        println!("{}, world!", s2); // this works
+    }
+
+    fn gives_ownership() -> String {
+        let some_string = String::from("hello");
+        some_string
+    }
+
+    fn takes_and_gives_back(a_string: String) -> String {
+        a_string
+    }
+\end{lstlisting}
