@@ -20,6 +20,8 @@
         - Kontrollstrukturen
     - Ownership
         - Funktionweise von Ownership
+        - Referenzen und Borrowing
+        - Slice Typ
     - Klassen
     - Packages, Crates
     - Module

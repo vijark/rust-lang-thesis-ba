@@ -364,7 +364,7 @@ Mit \verb"for"-Schleifen kann in Rust die Sicherheit des Codes erhöht werden, d
 
 \section{Ownership}
 
-Ownership ist ein einzigartiges Merkmal von Rust. Es ermöglicht Speichersicherheit ohne die Notwendigkeit eines Garbage Collectors. Daher ist es wichtig, das Ownership-Prinzip als Programmierer zu verstehen. In diesem Kapitel wird Ownership und damit zusammenhängende Eigenschaften wie Borrowing, Slices und wie Rust Daten im Arbeitsspeicher ablegt beschrieben.
+Ownership ist ein einzigartiges Merkmal von Rust. Es ermöglicht Speichersicherheit zur Kompilierzeit ohne die Notwendigkeit eines Garbage Collectors. Daher ist es wichtig, das Ownership-Prinzip als Programmierer zu verstehen. In diesem Kapitel wird Ownership und damit zusammenhängende Eigenschaften wie Borrowing, Slices und wie Rust Daten im Arbeitsspeicher ablegt beschrieben.
 
 \subsection{Funktionsweise von Ownership}
 
@@ -597,3 +597,186 @@ Funktionen können auch Ownership durch einen Rückgabewert wieder zu\-rück\-ge
         a_string
     }
 \end{lstlisting}
+
+\subsection{Referenzen und Borrowing}
+
+Eine Funktion, welche die Länge eines String berechnet und die Ownership des verwendeten Strings zurückgibt, könnte wiefolgt aussehen:
+
+\begin{lstlisting}
+    fn main() {
+        let s1 = String::from("hello");
+        let (s2, len) = calculate_length(s1);
+        println!("The length of '{}' is {}.", s2, len);
+    }
+    fn calculate_length(s: String) -> (String, usize) {
+        let length = s.len();
+        (s, length)
+    }
+\end{lstlisting}
+
+Dies ist jedoch viel Aufwand für ein Konzept, das gebräuchlich sein sollte. Rust hat für dieses Konzept jedoch eine Funktion, genannt Referenzen.
+
+So wird die \verb"calculate_length" Funktion definiert und benutzt, die eine Referenz auf ein Objekt als Parameter enthält, anstatt die Ownership zu übernehmen:
+
+\begin{lstlisting}
+    fn main() {
+        let s1 = String::from("hello");
+        let len = calculate_length(&s1);
+        println!("The length of '{}' is {}.", s1, len);
+    }
+    fn calculate_length(s: &String) -> usize {
+        s.len()
+    }
+\end{lstlisting}
+
+Der gesamte Tupelcode in der Variablendeklaration und der Funk\-ti\-ons\-rück\-ga\-be\-wert ist weg. Außerdem wird \verb"&s1" in \verb"calculate_length" und in seiner Definition \verb"&String" anstelle von \verb"String" benutzt.
+
+Diese Und-Zeichen sind Referenzen und ermöglichen, auf einen bestimmten Wert zu verweisen, ohne dessen Ownership zu beanspruchen. \autoref{fig:tabelle5} zeigt ein Diagramm.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.9]{Programmierung/Tabelle5.pdf}
+    \caption{Diagramm von \texttt{\&String} \texttt{s} Zeiger auf \texttt{String} \texttt{s1}}
+    \label{fig:tabelle5}
+\end{figure}
+
+Mit der \verb"&s1" Syntax kann eine Referenz erstellt werden, die sich auf den Wert von \verb"s1" bezieht, ihm aber nicht gehört. Der Wert den er verweist, wird nicht gelöscht, wenn die Referenz den Gültigkeitsbereich verlässt.
+
+Ebenso verwendet die Signatur der Funktion \verb"&" um anzuzeigen, dass der Typ des Parameters eine Referenz ist.
+
+Das Gegenteil der Referenzierung mit \verb"&" ist die Dereferenzierung, die mit dem Dereferenzierungsoperator \verb"*" erzielt wird.
+
+Der Gültigkeitsbereich von \verb"s" ist der eines normalen Funktionsparameters. Jedoch wird der Wert nicht aus dem Speicher gelöscht, da keine Ownership an \verb"s" übergeben wurde, weshalb auch keine zurückgegeben werden muss. Referenzen als Funktionsparameter wird in Rust \glqq Borrowing\grqq{} genannt. Wie in der realen Welt kann Eigentum an andere ausgeliehen werden und wenn die andere Person es nicht mehr braucht, kann diese es wieder an den Eigentümer zurückgegeben.
+
+Genauso wie Variablen standardmäßig unveränderlich sind, gilt dies auch für Referenzen. Es kann nichts verändert werden, auf das nur referenziert wird. Folgender Code würde also nicht funktionieren:
+
+\begin{lstlisting}
+    fn main() {
+        let s = String::from("hello");
+        change(&s);
+    }
+    fn change(some_string: &String) {
+        some_string.push_str(", world"); // error
+    }
+\end{lstlisting}
+
+\subsubsection{Veränderbare Referenzen}
+
+Kleine Veränderungen beheben den Fehler aus dem letzten Programm:
+
+\begin{lstlisting}
+    fn main() {
+        let mut s = String::from("hello");
+        change(&mut s);
+    }
+    fn change(some_string: &mut String) {
+        some_string.push_str(", world"); // works now
+    }
+\end{lstlisting}
+
+Die Variable \verb"s" muss veränderbar sein mit \verb"mut". Es wird nun eine veränderbare Referenz übergeben und die Funktion erwartet auch einen entsprechende Referenz mit \verb"some_string: &mut String".
+
+Veränderbare Referenzen haben eine große Einschränkung: Sie können nur eine veränderbare Referenz auf ein bestimmtes Datenelement in einem bestimmeten Bereich haben. Folgender Code würde also nicht funktionieren:
+
+\begin{lstlisting}
+    let mut s = String::from("hello");
+    let r1 = &mut s;
+    let r2 = &mut s;
+    println!("{}, {}", r1, r2);
+\end{lstlisting}
+
+Diese Einschränkung erlaubt kontrollierte Veränderbarkeit von Variablen. Mithilfe dieser Regel verhindert Rust sogenannte \glqq data races\grqq{}. Diese ähneln sich einer \glqq race condition\grqq{} und tritt auf, wenn drei Verhaltensweisen auftreten:
+
+\begin{itemize}
+    \item Zwei oder mehr Pointer greifen zeitgleich auf den selben Speicherbereich zu.
+    \item Mindestens einer der Pointer schreiben.
+    \item Kein Mechanismus wird verwendet, um den Zugriff der Daten zu synchronisieren.
+\end{itemize}
+
+Diese \glqq data races\grqq{} können undefiniertes Verhalten auslösen und sind schwer festzustellen und zu beheben. In Rust-Programmen gibt es dieses Problem nicht, da gefährdeter Code nicht ohne Fehler kompiliert.
+
+Es dürfen auch keine Kombinationen aus veränderbaren und unveränderbaren Referenzen erstellt werden. Folgender Code führt zu einem Compilerfehler:
+
+\begin{lstlisting}
+    let mut s = String::from("hello");
+    let r1 = &s; // no problem
+    let r2 = &s; // no problem
+    let r3 = &mut s; // big problem
+    println!("{}, {}, and {}", r1, r2, r3);
+\end{lstlisting}
+
+Bei unveränderliche Referenzen sollten man nicht damit rechnen müssen, dass sich der Wert dahinter verändern kann. Mehrere unveränderbare Referenzen sind in Ordnung, da mehrere lesende Zugriffe sich untereinander nicht beeinflussen.
+
+\subsubsection{\glqq Dangling References\grqq{}}
+
+In Programmiersprachen mit Pointer kann es vorkommen, dass Pointer auf einen Bereich im Speicher zeigen, der bereits freigegeben wurde, sogenannte \glqq dangling pointer\grqq{}. In Rust garantiert der Compiler, dass Referenzen immer auf einen gültigen Bereich zeigen. Folgender Code wird also beim Kompilieren eine Fehlermeldung ausgeben:
+
+\begin{lstlisting}
+    fn main() {
+        let reference_to_nothing = dangle();
+    }
+    fn dangle() -> &String {
+        let s = String::from("hello");
+        &s
+    }
+\end{lstlisting}
+
+Der String \verb"s" wird nach der Funktion \verb"dangle" aus dem Speicher gelöscht. Die Referenz, die zurückgegeben wird, würde auf einen ungültigen Bereich im Speicher zeigen. Der Compiler erkennt, dass der Rückgabewert eine \glqq dangling reference\grqq{} ist und gibt eine Fehlermeldung aus. Es sollte die Ownership von \verb"s" zurückgegeben werden, damit der String im Speicher bleibt:
+
+\begin{lstlisting}
+    fn no_dangle() -> String {
+        let s = String::from("hello");
+        s
+    }
+\end{lstlisting}
+
+\subsubsection{Regeln: Referenzen}
+
+\begin{itemize}
+    \item Es kann entweder nur eine veränderbare oder eine beliebige Anzahl an unveränderlichen Referenzen benutzt werden.
+    \item Referenzen müssen immer gültig sein.
+\end{itemize}
+
+\subsection{Slice Typ}
+
+Ein weiterer Datentyp, welcher keine Ownership annimmt sind Slices. Sie wird benutzt um eine zusammenhängende Folge von Elementen einer Sammlung anstatt auf die gesamte Sammlung zu verweisen.
+
+\subsubsection{String Slice}
+
+Wenn ein bestimmter Teil eines String referenziert werden soll, würde man in andern Sprachen den Index berechnen, an welcher Stelle z.B. ein neues Wort beginnt. Wenn der String jedoch vom Speicher gelöscht wird, existiert der berechnete Index immer noch, da er nach der Berechnung unabhängig geworden ist.
+
+In Rust kann mit sogenannten \glqq string slices\grqq{} ein bestimmter Bereich eines Strings referenziert werden.
+
+\begin{lstlisting}
+    let s = String::from("hello world");
+    let hello = &s[0..5];
+    let world = &s[6..11];
+\end{lstlisting}
+
+Die Syntax der Klammern beschreibt \verb"[starting_index..ending_index]". Intern wird die Startposition und Länge gespeichert. Die Länge ergibt sicht aus der Differenz aus \verb"starting_index" und \verb"ending_index". Die Variable \verb"world" ist ein Pointer auf das siebte Byte von \verb"s" mit einer Länge von 5. \autoref{fig:tabelle6} zeigt ein Diagramm des Speichers.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.9]{Programmierung/Tabelle6.pdf}
+    \caption{Diagramm eines String Slice}
+    \label{fig:tabelle6}
+\end{figure}
+
+Dadurch entsteht eine Abhängigkeit, welche es Rust erlaubt, bereits beim Kompilieren festzustellen, ob String Slices auf einen gültigen Bereich zeigen. So wird der Code weniger anfällig für Laufzeitfehler.
+
+\begin{lstlisting}
+    let s = "Hello, world!";
+\end{lstlisting}
+
+Der Typ von \verb"s" ist \verb"&str": Es ist ein String Slice, welcher auf einen bestimmten Punkt zeigt. Deshalb sind String-Literale unveränderlich. \verb"&str" ist eine unveränderliche Referenz.
+
+\subsubsection{Andere Slices}
+
+String Slices sind spezifisch für Strings. Es gibt auch einen allgemeineren Slice-Typ. Genauso wie bei Strings, können auch Teile von Arrays referenziert werden:
+
+\begin{lstlisting}
+    let a = [1, 2, 3, 4, 5];
+    let slice = &a[1..3];
+\end{lstlisting}
+
+Der Typ von \verb"slice" ist \verb"&[i32]". Auch hier wird ein Pointer auf das erste Element gespeichert sowie die Länge des Slice.
