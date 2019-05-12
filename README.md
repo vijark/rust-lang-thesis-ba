@@ -22,14 +22,15 @@
         - Funktionweise von Ownership
         - Referenzen und Borrowing
         - Slice Typ
-    - Klassen
-    - Packages, Crates
-    - Module
+    - Modulsystem
+    - Objektorientierung
+        - Kapselung
+        - Vererbung
+        - Traits
+    - Generische Typen
     - Testing
     - Collections
     - Error Handling
-    - Generische Typen
-    - Pointer
     - Threads
     - Dokumentieren mit rustdoc
 4. Performance

@@ -780,3 +780,262 @@ String Slices sind spezifisch für Strings. Es gibt auch einen allgemeineren Sli
 \end{lstlisting}
 
 Der Typ von \verb"slice" ist \verb"&[i32]". Auch hier wird ein Pointer auf das erste Element gespeichert sowie die Länge des Slice.
+
+
+\section{Modulsystem}
+
+Das Modulsystem von Rust ermöglicht die Erstellung von Modulen, welche durch Pfade angesprochen werden können. Mit diesem System können auch externe Pakete verwendet werden.
+
+Module lassen den Code in Gruppen einteilen:
+
+\begin{lstlisting}
+    mod sound {
+        mod instrument {
+            mod string {
+                fn guitar() {}
+            }
+        }
+        mod voice {}
+    }
+\end{lstlisting}
+
+Das Beispiel definiert das Modul \verb"sound" mit zwei inneren Modulen \verb"instrument" und \verb"voice". Ein Modul \verb"string" in \verb"instrument" mit der Funktion \verb"guitar". Der gesamte Modulbaum ist unter dem impliziten Modul namens \verb"crate" verwurzelt.
+
+Diese Art von Baum erinnert an das Dateisystem eines Computers. Genau wie die Verzeichnisse in einem Dateisystem wird im Code durch Module den Code organisiert. Eine weitere Ähnlichkeit besteht darin, dass zum Verweisen auf ein Element dessen Pfad verwendet wird.
+
+Ein Pfad kann zwei Formen annehmen:
+
+\begin{itemize}
+    \item Ein absoluter Pfad beginnt bei einer crate root mithilfe des crate-Namens oder dem Schlüsselwort \verb"crate".
+    \item Ein relativer Pfad beginnt beim aktuellen Modul und verwendet \verb"self", \verb"super" oder einen Bezeichner im aktuellen Modul.
+\end{itemize}
+
+Das Trennzeichen besteht aus zwei Doppelpunkten (\verb"::"). Folgende \verb"main"-Funktion könnte unter dem letzten Codebeispiel folgen:
+
+\begin{lstlisting}
+    fn main() {
+        // Absolute path
+        crate::sound::instrument::string::guitar();
+
+        //Relative path
+        sound::instrument::string::guitar();
+    }
+\end{lstlisting}
+
+Dieser Code würde jedoch nicht kompilieren, da alle Elemente (Funktionen, Methoden, Strukturen, Enums und Konstanten) standardmäßig privat sind. Es kann das Schlüsselwort \verb"pub" verwendet werden, um ein Element öffentlich zu machen.
+
+Elemente ohne das Schlüsselwort \verb"pub" sind privat, wenn der Modulbaum des aktuellen Moduls \glqq nach unten\grqq{} betrachtet wird. Elemente ohne \verb"pub" sind jedoch öffentlich, wenn der Baum \glqq nach oben\grqq{} betrachtet wird. In einem Dateisystem verhält es sich ähnlich: Ohne Berechtigung auf einen Ordner kann dieser nicht betrachtet werden. Auf einen zugänglichen Ordner können dessen Vor\-gän\-ger\-ver\-zeich\-nis\-se auch eingesehen werden.
+
+Um die Funktion \verb"guitar" in der \verb"main"-Methode aufrufen zu können, müssen ei\-ni\-ge Module sowie die Funktion öffentlich gemacht werden:
+
+\begin{lstlisting}
+    mod sound {
+        pub mod instrument {
+            pub mod string {
+                pub fn guitar() {}
+            }
+        }
+        mod voice {}
+    }
+\end{lstlisting}
+
+Relative Pfade können mit \verb"super" auch auf übergeordnete Module zugreifen, ähnlich wie bei einem Dateisystem mit \glqq\verb".."\grqq{}:
+
+\begin{lstlisting}
+    mod sound {
+        pub mod instrument {
+            pub fn clarinet() {
+                super::breathe_in();
+            }
+        }
+        fn breathe_in() {
+            // Function body code
+        }
+    }
+\end{lstlisting}
+
+Lange Pfade können mit dem Schlüsselwort \verb"use" gekürzt werden. Das ist vergleichbar mit einer Verknüpfung in einem Dateisystem. Es können absolute sowie relative Pfade benutzt werden.
+
+\begin{lstlisting}
+    use crate::sound::instrument;
+
+    fn main() {
+        instrument::clarinet();
+    }
+\end{lstlisting}
+
+Externe Pakete können verwende werden. Zunächst muss das Paket via Cargo.toml hinzugefügt werden:
+
+\begin{lstlisting}
+    [dependencies]
+    rand = "0.6.5"
+\end{lstlisting}
+
+Im Code:
+
+\begin{lstlisting}
+    use rand::Rng;
+
+    fn main() {
+        let secret = rand::thread_rng().gen_range(1, 101);
+    }
+\end{lstlisting}
+
+Der Quellcode kann mit dem Schlüsselwort \verb"mod" auf mehrere Dateien aufgeteilt werden, dabei ist der Name der Datei der Name des Moduls. Ordnerstrukturen können auch erstellt werden, dabei ist die Datei mod.rs die Definition des Moduls des Ordners.
+
+Datei \textbf{src/main.rs}
+
+\begin{lstlisting}
+    mod sound;
+
+    fn main() {
+        sound::instrument::clarinet();
+    }
+\end{lstlisting}
+
+\vspace{1cm}
+
+Datei \textbf{src/sound.rs}
+
+\begin{lstlisting}
+    pub mod instrument {
+        pub fn clarinet() {
+            // Function body
+        }
+    }
+\end{lstlisting}
+
+
+\section{Objektorientierung}
+
+In der Programmiergemeinschaft herrscht kein Konsens darüber, welche Merkmale eine Sprache besitzen muss, um objektorientiert zu sein. Rust wird von vielen Programmierparadigmen beeinflusst, darunter auch von objektorientierter Programmierung (OOP). Rust teilt bestimmte Gemeinsamkeiten mit OOP-Sprachen: Objekte, Kapselung und Vererbung.
+
+Das Buch \textit{Design Patterns: Elements of Reusable Object-Oriented Software} von Erich Gamma, Richard Helm, Ralph Johnson und John Vlissides definiert OOP auf diese Weise:
+
+\begin{quote}
+    Object-oriented programs are made up of objects. An object packages both data and the procedures that operate on that data. The procedures are typically called methods or operations.
+\end{quote}
+
+Nach dieser Definition ist Rust objektorientiert. Strukturen und Enums enthalten Daten und \verb"impl" Blöcke stellen Methoden für Strukturen und Enums bereit.
+
+Eine Struktur in Rust in vergleichbar mit \verb"struct" in C oder C++. Rust kann diese Strukturen jedoch mit Methoden erweitern, sodass diese wie Klassen verwendet werden können.
+
+Beispiel:
+
+\begin{lstlisting}
+    struct Employee {
+        id: i32,
+        age: i32,
+        wage: f64,
+    }
+    
+    impl Employee {
+        fn birthday(&mut self) {
+            self.age += 1;
+        }
+    }
+    
+    fn main() {
+        let mut joe = Employee {
+            id: 1,
+            age: 32,
+            wage: 48000.0,
+        };
+        joe.birthday();
+    }
+\end{lstlisting}
+
+\subsection{Kapselung}
+
+Ein weiterer Aspekt, welcher häufig mit OOP in Verbindung steht, ist die Idee der Kapselung. Das bedeutet, dass die Implementierung eines Objekts nicht für den Code verfügbar sind, der dieses Objekt verwendet.
+
+Mit Modulen kann in Rust gekapselt werden, aber auch Strukturen und Enums sowie dessen Werte sind standardmäßig privat und können mit dem Schlüsselwort \verb"pub" öffentlich gemacht werden.
+
+\begin{lstlisting}
+    pub mod people {
+        pub struct Employee {
+            pub id: i32,  // public
+            age: i32,     // private
+            wage: f64,    // private
+        }
+    }
+\end{lstlisting}
+
+\subsection{Vererbung}
+
+Vererbung ist ein Mechanismus, mit dem ein Objekt von der Definition eines anderen Objekts erben kann, wodurch die Daten und das Verhalten des über\-ge\-ord\-ne\-ten Objekts übernommen werden, ohne dass sie erneut definiert werden müssen.
+
+Wenn eine Sprache Vererbung haben muss, um eine objektorientierte Sprache zu sein, dann ist Rust keine. Es gibt keine Möglichkeit eine Struktur zu definieren, die Felder und Methodenimplementierungen der übergeordneten Struktur erbt.
+
+Ein Beispiel der Vererbung in C++:
+
+\begin{lstlisting}
+    class Employee {
+      public:
+        string first_name, family_name;
+        char middle_initial;
+        Date hiring_date;
+        short department;
+        // ...
+    };
+
+    class Manager : public Employee {
+        list<Employee *> group;
+        short level;
+        // ...
+    };
+\end{lstlisting}
+
+Hier besitzt der Manager die gleichen Felder wie ein normaler Mitarbeiter zu\-sätz\-lich zu den eigenen Feldern.
+
+\subsubsection{Warum verzichtet Rust auf Vererbung?}
+
+In letzter Zeit ist die Vererbung als Entwurfslösung in vielen Programmiersprachen in Ungnade gefallen, da häufig die Gefahr besteht, dass mehr Code als erforderlich gemeinsam genutzt wird. Unterklassen sollten nicht immer alle Merkmale ihrer übergeordneten Klasse gemeinsam haben, dies geschieht jedoch mit Vererbung. Dies kann das Design eines Programms weniger flexibel machen. Außerdem wird die Möglichkeit eingeführt, Methoden für Unterklassen aufzurufen, die keinen Sinn ergeben oder Fehler verursachen, da die Methoden nicht für die Unterklasse gelten. Darüber hinaus können in einigen Sprachen nur Unterklassen von einer Klasse erben, was die Flexibilität der Sprache weiter einschränkt.
+
+\subsection{Traits}
+
+Ein \verb"trait" ist eine Sammlung von Methoden, die für einen unbekannten Typ definiert wurden: \verb"Self". Sie können auf Methoden zugreifen, die im selben Trait definiert sind. Traits können können für jeden Datentyp implementiert werden. \cite{RustExample}
+
+\begin{lstlisting}
+    pub trait Animal {
+        fn noise(&self) -> &str;
+    }
+\end{lstlisting}
+
+Dieses Trait definiert ein Tier, welches Geräusche von sich geben kann.
+
+\begin{lstlisting}
+    pub struct Sheep {
+        pub name: String,
+    }
+    impl Animal for Sheep {
+        fn noise(&self) -> &str {
+            "baaaaaah"
+        }
+    }
+\end{lstlisting}
+
+Die Struktur \verb"Sheep" implementiert den Trait, das heißt, dass ein Schaf als Tier gesehen wird. Es können nun Funktionen geschrieben werden, die eine beliebiges Tier erwarten:
+
+\begin{lstlisting}
+    pub fn make_animal_speak(animal: &dyn Animal) {
+        println!("Animal says {}.", animal.noise());
+    }
+\end{lstlisting}
+
+Oder eine Liste von Tieren:
+
+\begin{lstlisting}
+    let mut animals: Vec<Box<dyn Animal>> = Vec::new();
+    animals.push(Box::new(Sheep {}));
+\end{lstlisting}
+
+Das Schlüsselwort \verb"dyn" ist optional, dient aber zur Unterscheidung zwischen dem Trait (dyn) und einer Struktur, welche dieses Trait implementiert (impl).
+
+Der Typ \verb"Box" ist ein Pointer mit einer festen Speichergröße, mit dem Werte auf dem Heap gespeichert werden können. Er wird benötigt, da zur Kompilierzeit die Größe des Datentyps noch nicht bekannt ist.
+
+\subsubsection{Trait-Objekte benutzen dynamische Bindung (dynamic dispatch)}
+
+Wenn Trait-Objekte verwendet werden, muss Rust die dynamische Bindung benutzen. Der Compiler kennt nicht alle Typen, die möglicherweise für den Code verwendet werden, sodass er nicht weiß, welche Methode für welchen Typ der Aufruf implementiert ist. Stattdessen verwendet Rust zur Laufzeit Zeiger im Trait-Objekt, um zu ermitteln, welche Methode aufgerufen werden soll. Wenn diese Suche ausgeführt wird, fallen Laufzeitkosten an, die beim statischen Binden (static dispatch) nicht auftreten. Die dynamische Bindung verhindert auch, dass der Compiler den Code einer Methode direkt an die entsprechende Stelle kopiert, was wiederum einige Optimierungen verhindert. Jedoch erhält man durch Traits zusätzliche Flexibilität im Code, es ist also ein Kompromiss.
+
+
