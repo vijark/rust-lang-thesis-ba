@@ -27,12 +27,11 @@
         - Kapselung
         - Vererbung
         - Traits
-    - Generische Typen
-    - Testing
-    - Collections
+    - Generische Programmierung
+    - Unit-Tests
     - Error Handling
-    - Threads
     - Dokumentieren mit rustdoc
+    - Rust WebAssembly
 4. Performance
     - Optimierungen
     - Benchmark-Tests

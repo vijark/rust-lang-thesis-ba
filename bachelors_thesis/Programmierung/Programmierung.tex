@@ -1039,3 +1039,255 @@ Der Typ \verb"Box" ist ein Pointer mit einer festen Speichergröße, mit dem Wer
 Wenn Trait-Objekte verwendet werden, muss Rust die dynamische Bindung benutzen. Der Compiler kennt nicht alle Typen, die möglicherweise für den Code verwendet werden, sodass er nicht weiß, welche Methode für welchen Typ der Aufruf implementiert ist. Stattdessen verwendet Rust zur Laufzeit Zeiger im Trait-Objekt, um zu ermitteln, welche Methode aufgerufen werden soll. Wenn diese Suche ausgeführt wird, fallen Laufzeitkosten an, die beim statischen Binden (static dispatch) nicht auftreten. Die dynamische Bindung verhindert auch, dass der Compiler den Code einer Methode direkt an die entsprechende Stelle kopiert, was wiederum einige Optimierungen verhindert. Jedoch erhält man durch Traits zusätzliche Flexibilität im Code, es ist also ein Kompromiss.
 
 
+\section{Generische Programmierung}
+
+Ähnlich wie in C++ (Templates) gibt es auch in Rust die Möglichkeit, Typen als Argumente zu übergeben, ohne Informationen zu verlieren. Das bedeutet: Es können Funktionssignaturen oder Strukturen erstellt werden für Elemente, die viele verschiedene konkrete Datentypen verwenden können.
+
+Beispiel in Rust:
+
+\begin{lstlisting}
+    #[derive(Debug)]
+    struct Point<T> {
+        x: T,
+        y: T,
+    }
+    
+    impl<T> Point<T> {
+        fn new(x: T, y: T) -> Point<T> {
+            Point { x: x, y: y }
+        }
+    }
+    
+    fn main() {
+        let p1 = Point::new(1, 2);
+        let p2 = Point::new(1.0, 2.0);
+    }
+\end{lstlisting}
+
+Die Klasse \verb"Point" beinhaltet zwei Werte dessen Typen erst bei Erstellung des Objekts bekannt ist. Beide Variablen \verb"x" und \verb"y" haben den gleichen Typ \verb"T". Die Variable \verb"p1" ist ein \verb"Point<i32>" und \verb"p2" ein \verb"Point<f64>".
+
+Es können auch Typen verwendet werden, die bestimmte Traits implementieren müssen:
+
+\begin{lstlisting}
+    fn animal_noise<T: Animal>(animal: T) {
+        println!("This animal makes {}.", animal.noise());
+    }
+\end{lstlisting}
+
+C++ und Rust implementieren Generics so, dass Code mit generischen Typen nicht langsamer läuft als mit konkreten Typen. Rust erreicht dies dadurch, dass beim Kompilieren generischer Code in spezifischen Code umgewandelt wird und die konkreten Typen eingetragen werden. Dieser Prozess wird Monomorphisierung genannt.
+
+
+\section{Unit-Tests}
+
+Rust wurde mit einem hohen Maß an Sorge um die Richtigkeit von Programmen entworfen, dies ist jedoch nicht leicht nachzuweisen. Das Typensystem von Rust kann nicht jede Art von Fehlern verhindern, daher bietet Rust Unterstützung für das Schreiben automatisierter Softwaretests.
+
+In C oder C++ gibt es Frameworks, welche von Dritten angeboten werden. Ein Beispiel ist Google Test\footnote{https://github.com/google/googletest}.
+
+Für Unit-Tests in Rust wird nach Konvention in jeder Datei ein Modul mit dem Namen \verb"tests" erstellt mit der Annotation \verb"#[cfg(test)]". Hier werden Testfunktionen definiert mit der Annotation \verb"#[test]". Die Tests werden mit dem Befehl \verb"cargo test" gestartet.
+
+\begin{lstlisting}
+    #[cfg(test)]
+    mod tests {
+        #[test]
+        fn it_works() {
+            assert_eq!(2 + 2, 4);       // assert equal
+            assert_ne!(2 + 2, 22);      // assert not equal
+        }
+    }
+\end{lstlisting}
+
+Folgende Makros sind hilfreich bei der Erstellung von Tests:
+
+\begin{itemize}
+    \item \verb"assert!(a)" Prüft einen Boolean-Wert; Panik bei \verb"false".
+    \item \verb"assert_eq!(a,b)" Vergleicht zwei Werte; Panik bei unterschiedlichen Werten.
+    \item \verb"assert_ne!(a,b)" Wie \verb"assert_eq!"; Panik bei gleichen Werten.
+    \item \verb"panic!()" Generiert Panik und der Test schlägt fehl.
+\end{itemize}
+
+Diese Makros können zusätzlich einen Text für zusätzliche Information ausgeben.
+
+\begin{lstlisting}
+    assert_eq!(a, b, "Testing equality of {} and {}", a, b);
+\end{lstlisting}
+
+
+\section{Error Handling}
+
+\subsection{Fehler mit \texttt{panic!}}
+
+Wenn im Code ein Fehler auftritt, kann das Makro \verb"panic!" benutzt werden. Im letzten Kapitel wurde wurde es bereits genutzt, um Tests fehlschlagen zu lassen. Beim Aufruf dieses Makros gibt das Programm eine Fehlermeldung aus, räumt den Stack auf und beendet sich.
+
+Wenn also eine Panik auftritt, wird das Programm standardmäßig beendet. Dies bedeutet, dass Rust den Stack zurücksetzt und die Daten aller Funktionen bereinigt, auf die er stößt. Aber das Zurückgehen und Aufräumen ist eine Menge Arbeit. Die Alternative ist, sofort abzubrechen, wodurch das Programm ohne Bereinigung beendet wird und der vom Programm verwendete Speicher vom Betriebssystem bereinigt werden muss. Wenn in einem Projekt die resultierende Binärdatei so klein wie möglich gestaltet werden soll, kann bei einer Panik vom \glqq Abwickeln\grqq{} auf \glqq Abbrechen\grqq{} gewechselt werden, indem in der Cargo.toml \verb"panic = 'abort'" zu den entsprechenden Abschnitten hinzugefügt wird.
+
+\begin{lstlisting}
+    [profile.release]
+    panic = 'abort'
+\end{lstlisting}
+
+Eine Panik kann beispielsweise auch ausgelöst werden, wenn im Code auf ein Element eines Vektors zugegriffen wird, welches nicht innerhalb des Bereichs liegt:
+
+\begin{lstlisting}
+    fn main() {
+        let v = vec![1, 2, 3];
+        v[99];
+    }
+\end{lstlisting}
+
+In diesem Codebeispiel wird auf das 100. Element des Listenelements \verb"v" zugegriffen. Dadurch entsteht folgende Fehlermeldung:
+
+\begin{lstlisting}
+    thread 'main' panicked at 'index out of bounds: the len
+    is 3 but the index is 99'
+\end{lstlisting}
+
+In C und C++ würden bei Arrays keine Fehlermeldung erscheinen und es würde ein Zahlenwert ausgegeben werden, der davon abhängig ist, was in diesem Moment im Speicher steht. In C++ können jedoch alternativ Listen (z.B. \verb"vector<int>") erstellt werden, die zur Laufzeit überprüfen können, ob die Zugriffe innerhalb der Liste stattfinden.
+
+\subsection{Fehler mit \texttt{Result}}
+
+Viele Fehler sind nicht schwerwiegend genug, um ein vollständiges Anhalten des Programms zu erfordern. Wenn beispielsweise eine Datei geöffnet werden soll, welche nicht existiert könnte diese Datei erstellt werden, anstatt das Programm zu beenden.
+
+Das Enum \verb"Result" ist definiert:
+
+\begin{lstlisting}
+    enum Result<T, E> {
+        Ok(T),
+        Err(E),
+    }
+\end{lstlisting}
+
+Bei \verb"T" und \verb"E" handelt es sich um generische Typparameter. Dabei stellt \verb"T" den Typ des Werts dar, der in einem Erfolgsfall innerhalb der \verb"Ok" Variante zurückgegeben wird und \verb"E" stellt die Art des Fehlers dar, der in einem Fehlerfall innerhalb der \verb"Err" Variable zurückgegeben wird.
+
+Im Folgendem Beispiel wird eine Funktion aufgerufen, die ein \verb"Result" zurückgibt, da sie fehlschlagen könnte.
+
+\begin{lstlisting}
+    use std::fs::File;
+    fn main() {
+        let f = File::open("hello.txt");
+    }
+\end{lstlisting}
+
+In der Standardbibliothek steht beschrieben, welchen Typ die Funktion zu\-rück\-gibt, \verb"f" ist vom Typ \verb"Result<File, Error>". Mithilfe des \verb"match"-Statements kann getestet werden, ob die Funktion korrekt ausgeführt wurde und welche Art von Fehler entstanden ist.
+
+\begin{lstlisting}
+    use std::fs::File;
+    use std::io::ErrorKind;
+
+    let f = match f {
+        Ok(file) => file,
+        Err(error) => match error.kind() {
+            ErrorKind::NotFound => /*TODO: create file*/
+                                   panic!(),
+            other_error => panic!("could not open: {:?}",
+                           other_error),
+        }
+    };
+\end{lstlisting}
+
+Der Aufruf \verb"error.kind()" gibt ein enum \verb"ErrorKind" zurück, womit auf verschiedene Fehlerszenarien reagiert werden kann.
+
+\subsubsection{Fehler weitergeben}
+
+Beim Schreiben einer Funktion, welche möglicherweise einen Fehler aufruft, kann der Fehler an den aufrufenden Code zurückgegeben werden, anstatt den Fehler in dieser Funktion zu behandeln. Somit wird dem aufrufendem Code mehr Kontrolle gegeben. Anstelle des Aufrufs von \verb"panic!" wird ein \verb"return"-Statement verwendet. Alternativ kann der \verb"?"-Operator verwendet werden.
+
+\subsection{\texttt{?}-Operator}
+
+Codebeispiel:
+
+\begin{lstlisting}
+    use std::io;
+    use std::Read;
+    use std::fs::File;
+
+    fn read_username() -> Result<String, io::Error> {
+        let mut f = File::open("hello.txt")?;
+        let mut s = String::new();
+        f.read_to_string(&mut s)?;
+        Ok(s)
+    }
+\end{lstlisting}
+
+Wird ein \verb"?" hinter ein \verb"Result" geschrieben und der Wert ist ein \verb"Ok", wird der Wert innerhalb des \verb"Ok" von diesem Ausdruck zurückgegeben und das Programm wird fortgesetzt. Wenn es sich bei dem Wert um einen Fehler handelt, wird der Fehler von der gesamten Funktion zurückgegeben, als ob das Schlüsselwort \verb"return" verwendet wurde. Dieser Operator kann nur innerhalb von Funktionen verwendet werden, welche ein \verb"Result" als Rückgabetyp haben. Dadurch wird die Implementierung vereinfacht und die Lesbarkeit des Codes verbessert.
+
+\subsection{Error Handling in C und C++}
+
+In C gibt es keine direkte Unterstützung für die Fehlerbehandlung, es gibt aber Möglichkeiten, wie sie dennoch durchgeführt werden kann. Viele C-Funk\-ti\-ons\-auf\-ru\-fe geben im Fehlerfall \verb"-1" oder \verb"NULL" zurück, sodass mit Hilfe einer \verb"if"-Anweisung entsprechend reagiert werden kann. Die globale Variable \verb"errno" kann zusätzlich zur Unterscheidung verwendet werden.
+
+C++ bietet einige hilfreiche Features. Die \verb"throw"-Anweisung kann Ausnahmen an einen Handler übergeben, ähnlich wie es beispielsweise in Java üblich ist. Zusätzlich können statische Assertionen benutzt werden, um zur Kompilierzeit bestimmte Eigenschaften sicherzustellen.
+
+
+\section{Dokumentieren mit rustdoc}
+
+Ein wichtiger Bestandteil bei der Programmierung in Rust ist das Erstellen von Dokumentationen. Das Tool \verb"rustdoc" ist vergleichbar mit \verb"javadoc" für Java. Es können im Code spezielle Kommentare gemacht werden und daraus wird eine Dokumentation mit HTML, CSS und JavaScript erstellt.
+
+\subsection{Grundlegende Verwendung}
+
+Folgendes Beispiel zeigt die grundsätzliche Verwendung der Kommentare, sie werden mit drei Schrägstrichen gekennzeichnet. Alternativ kann die Annotation \verb"#[doc]" verwendet werden.
+
+\begin{lstlisting}
+    /// foo is a function
+    pub fn foo() {}
+\end{lstlisting}
+
+Alternative Schreibweise:
+
+\begin{lstlisting}
+    #[doc = "foo is a function"]
+    pub fn foo() {}
+\end{lstlisting}
+
+Es können in den Kommentarzeilen Elemente aus Markdown verwendet werden, um z.B. Überschriften oder Listen zu erstellen.
+
+Die Dokumentation kann mithilfe von Cargo erstellt werden mit folgendem Befehl auf der Kommandozeile:
+
+\begin{lstlisting}
+    $ cargo doc
+\end{lstlisting}
+
+Nach dem Kompilieren ist die \verb"index.html" anschließend zu finden unter dem Pfad \texttt{./target/doc/[crate-name]/index.html}.
+
+\subsection{Dokumentationstests}
+
+Rust erlaubt die Ausführung von Tests innerhalb der Codebeispiele in der Dokumentation. Codebeispiele werden mit drei Akzentzeichen (\verb"```") am Anfang und am Ende des Codes gekennzeichnet.
+
+\begin{lstlisting}
+    /// # Examples
+    /// ```
+    /// let x = 5;
+    /// assert_eq!(x, 5);
+    /// ```
+\end{lstlisting}
+
+Bei einem Aufruf von \verb"$ cargo test" wird dieser Code ausgeführt, somit muss der Code kompilierbar sein. Alle \verb"assert"-Funktionen können zusätzlich verwendet werden.
+
+Es gibt ein paar nützliche Anmerkungen, die dazu beitragen, dass \verb"rustdoc" beim Testen des Codes sich richtig verhält:
+
+\begin{itemize}
+    \item \verb"ignore": Der Code wird von Rust ignoriert.
+\begin{lstlisting}
+    /// ```ignore
+    /// fn foo() {
+    /// ```
+\end{lstlisting}
+\item \verb"should_panic": Der Test sollte eine Panik auslösen.
+\begin{lstlisting}
+    /// ```should_panic
+    /// assert!(false);
+    /// ```
+\end{lstlisting}
+\item \verb"no_run": Der Code wird kompiliert aber nicht ausgeführt.
+\begin{lstlisting}
+    /// ```no_run
+    /// loop {
+    ///     println!("Hello, world");
+    /// }
+    /// ```
+\end{lstlisting}
+\item \verb"compile_fail": Der Code soll beim Kompilieren einen Fehler ausgeben.
+\begin{lstlisting}
+    /// ```compile_fail
+    /// let x = 5;
+    /// x += 2; // shouldn't compile!
+    /// ```
+\end{lstlisting}
+\end{itemize}
