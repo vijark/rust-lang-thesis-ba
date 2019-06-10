@@ -5,25 +5,24 @@
 
 \begin{document}
 
-% TODO: Glossar
-
 \include{Titelseite/Titelseite}
 \input{LeereSeite/LeereSeite}
 \include{Erklaerung/Erklaerung}
 \input{LeereSeite/LeereSeite}
-% TODO: Abstract
+
+\setcounter{page}{1}
+\input{Abstract/Abstract.tex}
 
 % Liste Menüpunkte als Inhaltsverzeichnis
 \tableofcontents
-\setcounter{page}{1}
 
 % Kapitel
 \input{Einleitung/Einleitung.tex}
 \input{Toolchain/Toolchain.tex}
 \input{Programmierung/Programmierung.tex}
+\input{Performance/Performance.tex}
 
 % BibTex mit Stil alpha
-\nocite{*}
 \bibliography{Bibliothek}{}
 \bibliographystyle{alpha}
 

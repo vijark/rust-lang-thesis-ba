@@ -30,8 +30,18 @@
     - Generische Programmierung
     - Unit-Tests
     - Error Handling
+        - Fehler mit panic!
+        - Fehler mit Result
+        - ?-Operator
+        - Error Handling in C und C++
     - Dokumentieren mit rustdoc
-    - Rust WebAssembly
+        - Grundlegende Verwendung
+        - Dokumentationstests
+    - WebAssembly
+        - Beispielprojekt in Rust anlegen
 4. Performance
-    - Optimierungen
+    - zero-cost in Rust
     - Benchmark-Tests
+        - Die Benchmarkprogramme
+        - Ausführungszeit
+        - Speicherverbrauch

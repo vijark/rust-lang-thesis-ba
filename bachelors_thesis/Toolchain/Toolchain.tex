@@ -5,7 +5,7 @@ Die Rust toolchain ist eine Sammlung von Werkzeugen, die dabei helfen, den Compi
 
 \section{rustup}
 
-Das Rustup-Tool ist die empfohlene Installationsmethode für Rust. Das Tool ermöglicht zusätzlich die Verwaltung von verschiedenen Versionen, Komponenten und Plattformen. Um zwischen den Versionen stable, beta und nightly zu wechseln, kann auf der Kommandozeile eingegeben werden: \cite{RustEdition}
+Das Rustup-Tool ist die empfohlene Installationsmethode für Rust. Das Tool ermöglicht zusätzlich die Verwaltung von verschiedenen Versionen, Komponenten und Platt\-for\-men. Um zwischen den Versionen stable, beta und nightly zu wechseln, kann auf der Kommandozeile eingegeben werden: \cite{RustEdition}
 
 \begin{lstlisting}   
     rustup install beta                 # release channel
@@ -23,7 +23,7 @@ Rust unterstützt auch das Kompilieren für andere Zielsysteme, dabei kann rustu
     cargo build --target=x86_64-unknown-linux-musl
 \end{lstlisting}
 
-Mit Hilfe von rustup können verschiedene Komponenten installiert werden, z.B.:
+Mit Hilfe von rustup können verschiedene Komponenten installiert werden:
 
 \begin{itemize}
     \item rust-docs: Lokale Kopie der Rust-Dokumentation, um sie offline lesen zu können.
@@ -38,22 +38,22 @@ Mit Hilfe von rustup können verschiedene Komponenten installiert werden, z.B.:
 
 \section{rustc}
 
-Der Compiler von Rust, er übersetzt den Quellcode in einen binären code, entweder als Bibliothek oder als ausführbare Datei. Die meisten Rust-Programmierer rufen rustc nicht direkt auf, sondern indirekt über Cargo. \cite{RustcBook}
+Der Compiler von Rust, er übersetzt den Quellcode in einen binären Code, entweder als Bibliothek oder als ausführbare Datei. Die meisten Rust-Programmierer rufen rustc nicht direkt auf, sondern indirekt über Cargo. \cite{RustcBook}
 
 \subsection{Grundlegende Verwendung}
 
 Der Kommandozeilenbefehl für das Kompilieren mit rustc ähnelt dem eines C-Programms:
 
 \begin{lstlisting}
-    gcc   hello.c  -o helloC            # C program
-    rustc hello.rs -o helloRust         # Rust program
+    gcc   hello.c  -o helloC            # C
+    rustc hello.rs -o helloRust         # Rust
 \end{lstlisting}
 
 Anders als in C muss nur der crate root\footnote{Quellcode-Datei mit der main() Methode} angegeben werden. Der Compiler kann mithilfe des Codes selbständig festellen, welche Dateien er übersetzen und linken muss. Es müssen somit keine Objektdateien erstellt werden.
 
 \subsection{Lints}
 
-Ein Lint ist ein Werkzeug, das zur Verbesserung des Quellcodes verwendet wird. Der Rust-Compiler enthält eine Reihe von Lints. Beim Kompilieren werden dadurch Warnungen oder Fehlermeldungen ausgeben. Beispiel:
+Ein Lint ist ein Werkzeug, das zur Verbesserung des Quellcodes verwendet wird. Der Rust-Compiler enthält eine Reihe von Lints, dadurch werden beim Kompilieren Warnungen und Fehlermeldungen ausgeben. Beispiel:
 
 \begin{lstlisting}
     $ cat main.rs
@@ -71,12 +71,12 @@ Ein Lint ist ein Werkzeug, das zur Verbesserung des Quellcodes verwendet wird. D
       = note: #[warn(unused_variables)] on by default
 \end{lstlisting}
 
-Das ist das \verb"unused_variables" Lint. Es besagt, dass eine Variable eingeführt wurde, die nicht im Code verwendet wurde. Dies ist nicht falsch, es könnte jedoch ein Bug sein.
+Das ist das \verb"unused_variables" Lint und besagt, dass eine Variable deklariert wurde, die im Code keine Verwendung findet. Dies ist nicht falsch, es könnte jedoch ein Hinweis auf einen Bug sein.
 
 
 \section{Cargo}
 
-Cargo ein Projektmanager für Rust. Damit können Abhängigkeiten heruntergeladen und verteilbare Pakete erstellt werden, welche auf crates.io\footnote{Paketeregister der Rust-Community} hochgeladen werden können. \cite{CargoBook}
+Cargo ist ein Projektmanager für Rust. Damit können Abhängigkeiten heruntergeladen und verteilbare Pakete erstellt werden, welche auf crates.io\footnote{Paketeregister der Rust-Community} hochgeladen werden können. \cite{CargoBook}
 
 \subsection{Projektverwaltung}
 
@@ -108,9 +108,9 @@ Die Cargo.toml enthält alle wichtigen Metainformationen, die Cargo zum Kompilie
     [dependencies]    
 \end{lstlisting}
 
-Die Informationen über den Author enthält Cargo von den Umgebungsvariablen \verb"CARGO_NAME" und \verb"CARGO_EMAIL". In Rust gibt es sogenannte editions, welche in der Regel in einem zeitlichen Abstand von zwei oder drei Jahren veröffentlicht werden und, ähnlich wie in C, einen Standard festlegen. Zum Zeitpunkt der Erstellung dieser Arbeit gibt es zwei Editionen: 2015 und 2018. Das Pendant in C wären die C-Standards wie z.B. C90, C99 oder C11.
+Die Informationen über den Autor enthält Cargo von den Umgebungsvariablen \verb"CARGO_NAME" und \verb"CARGO_EMAIL". In Rust gibt es sogenannte editions, welche in der Regel in einem zeitlichen Abstand von zwei oder drei Jahren veröffentlicht werden und, ähnlich wie in C, einen Standard festlegen. Im Juli 2019 gab es zwei Editionen: 2015 und 2018. Das Pendant in C wären die C-Standards wie z. B. C90, C99 oder C11.
 
-Zudem können hier zusätzliche Bibliotheken angegeben werden, die Cargo automatisch von crates.io herunterlädt in in das Projekt einbindet. Cargo erstellt für genauere Informationen der Abhängigkeiten eine Datei Cargo.lock, diese sollte nicht manuell verändert werden, da sie von Cargo gepflegt wird. Mithilfe von Cargo können Tests gestartet werden, genauere Information dazu sind aus Kapitel 3.6 zu entnehmen.
+Zudem können hier zusätzliche Bibliotheken angegeben werden, die Cargo automatisch von crates.io herunterlädt und in das Projekt einbindet. Cargo erstellt für genauere Informationen der Abhängigkeiten eine Datei Cargo.lock. Diese sollte nicht manuell verändert werden, da sie von Cargo selbständig gepflegt wird. Mithilfe von Cargo können auch Tests gestartet werden, genauere Information dazu sind aus \autoref{chap:unittests} zu entnehmen.
 
 \subsubsection{Projekt-Layout}
 
@@ -121,32 +121,32 @@ Zudem können hier zusätzliche Bibliotheken angegeben werden, die Cargo automat
 \end{figure}
 
 \begin{itemize}
-    \item Cargo.toml und Cargo.lock werden im Wurzelverzeichnis des Projekts gespeichert
-    \item Quellcode-Dateien sind im src-Ordner vorgesehen
-    \item Die Standarddatei für Bibliotheken ist src/lib.rs
-    \item Die Standarddatei für ausführbare Programme ist src/main.rs
-    \item Quellcode für sekundäre ausführbare Programme src/bin/*.rs
-    \item Integrationstests im Ordner tests, Unit-Tests werden in die jeweilige Programmdatei geschrieben
-    \item Beispiele im examples Ordner
-    \item Benchmarks im benches Ordner
+    \item Cargo.toml und Cargo.lock werden im Wurzelverzeichnis des Projekts gespeichert.
+    \item Quellcode-Dateien sind im \verb"src"-Ordner vorgesehen.
+    \item Die Standarddatei für Bibliotheken ist \verb"src/lib.rs".
+    \item Die Standarddatei für ausführbare Programme ist \verb"src/main.rs".
+    \item Quellcode für sekundäre ausführbare Programme sind \verb"src/bin/*.rs".
+    \item Integrationstests befinden sich im Ordner \verb"tests", Unit-Tests werden in die jeweiligen Programmdateien geschrieben.
+    \item Beispiele befinden sich im \verb"examples" Ordner und
+    \item Benchmarks im \verb"benches" Ordner.
 \end{itemize}
 
 \subsubsection{Wichtige Kommandozeilenbefehle für Cargo}
 
-Zum Kompilieren uns Ausführen:
+Zum Kompilieren und Ausführen:
 
 \begin{lstlisting}
     $ cargo build
     $ ./target/debug/hello_world
 
-    $ cargo build --release             # optimized performance
+    $ cargo build --release          # optimized performance
     $ ./target/release/hello_world
 
-    # alternative as one command
+    # build and run in one command
     $ cargo run
 \end{lstlisting}
 
-Zum Testen:
+\noindent Zum Testen:
 
 \begin{lstlisting}
     # run all standard tests
@@ -158,7 +158,7 @@ Zum Testen:
 
 \subsection{Veröffentlichung bei crates.io}
 
-Das Paketeregister der Rust-Community, genannt crates.io, ist ein Ort für Bibliotheken, die von verschiedenen Programmierern aus der Community verwaltet werden. Eine Veröffentlichung ist permanent. Das heißt, dass keine Versionsnummern überschrieben werden können und somit der Code nicht gelöscht werden kann. Jedoch gibt es keine Begrenzung für die Anzahl der Versionen, die veröffentlicht werden können.
+Das Paketeregister der Rust-Community, genannt crates.io, ist ein Ort für Bibliotheken, die von verschiedenen Programmierern aus der Community verwaltet werden. Eine Veröffentlichung ist permanent. Das heißt, dass keine Versionsnummern überschrieben werden können und somit der Code nicht gelöscht werden kann. Dafür gibt es keine Begrenzung für die Anzahl der Versionen, die veröffentlicht werden können.
 
 Vor der Veröffentlichung wird ein Account benötigt. Dazu muss mit einem Github-Account auf crates.io ein API-Token generiert werden. Danach kann man sich über einen Befehl auf der Kommandozeile anmelden:
 
@@ -166,9 +166,9 @@ Vor der Veröffentlichung wird ein Account benötigt. Dazu muss mit einem Github
     $ cargo login abcdefghijklmnopqrstuvwxyz012345
 \end{lstlisting}
 
-Dieser Token wird anschließend in einem lokalen Verzeichnis gespeichert und sollte nicht mit anderen geteilt werden. Erneute Generierung eines Tokens ist möglich.
+Dieser Token wird anschließend in einem lokalen Verzeichnis gespeichert und sollte nicht mit anderen geteilt werden. Eine erneute Generierung eines Tokens ist möglich.
 
-Mithilfe von Cargo werden eigene Bibliotheken paketiert, dabei entsteht eine *.crate-Datei im Unterverzeichnis target/package.
+Mithilfe von Cargo werden eigene Bibliotheken paketiert, dabei entsteht eine *.crate-Datei im Unterverzeichnis \verb"target/package".
 
 \begin{lstlisting}
     $ cargo package
@@ -219,9 +219,9 @@ Wenn ein schwerwiegender Bug in einem bereits hochgeladenen Paket gefunden wurde
     $ cargo yank --vers 1.0.1 --undo    # undo the yank
 \end{lstlisting}
 
-Diese Pakete können immer noch heruntergeladen und in andere Projekte eingebunden werden, die bereits an \glqq yanked\grqq{} Pakete gebunden waren. Cargo lässt dies dies nicht bei neu erstellten Crates\footnote{Bibliothek oder Paket in Rust} zu.
+Diese Pakete können immer noch heruntergeladen und in andere Projekte eingebunden werden, die bereits an \glqq yanked\grqq{} Pakete gebunden waren. Cargo lässt dies jedoch nicht bei neu erstellten Crates\footnote{Bibliothek oder Paket in Rust} zu.
 
-Ein Projekt wird meist von mehreren Entwicklern programmiert oder Besitzer des Projekts ändert sich im Laufe der Zeit. Folgende Befehle fügen neue Entwickler zu einem Projekt hinzu, welche dann in der Lage sind, auf crates.io zu veröffentlichen bzw. entfernen sie aus dem Projekt:
+Ein Projekt wird meist von mehreren Entwicklern programmiert oder die Besitzer des Projekts ändern sich im Laufe der Zeit. Folgende Befehle fügen neue Entwickler zu einem Projekt hinzu, welche dann in der Lage sind, auf crates.io zu veröffentlichen:
 
 \begin{lstlisting}
     # "named" owner:
@@ -234,11 +234,11 @@ Ein Projekt wird meist von mehreren Entwicklern programmiert oder Besitzer des P
     $ cargo owner --remove github:rust-lang:owners
 \end{lstlisting}
 
-Wenn ein Teamname angegeben wird, sind diese nicht befugt, neue \glqq owner\grqq{} hinzuzufügen. Die Befehle yank und publish sind Teams jedoch erlaubt. Ist ein \glqq named owner\grqq{} in einem Team, so sind alle Entwickler eines Teams als \glqq named owner\grqq{} eingestuft.
+Wenn ein Teamname angegeben wird, sind diese nicht befugt, neue \glqq owner\grqq{} hinzuzufügen. Die Befehle yank und publish sind den Teammitgliedern jedoch erlaubt. Ist ein \glqq named owner\grqq{} in einem Team, so sind alle Entwickler dieses Teams als \glqq named owner\grqq{} eingestuft.
 
 \subsection{Externe Tools}
 
-Cargo versucht, die Integration von Tools von Drittanbietern zu vereinfachen, z.B. für IDEs oder anderen Build-Systemen. Dazu verfügt Cargo über mehrere Möglichkeiten:
+Cargo versucht, die Integration von Tools von Drittanbietern zu vereinfachen, z. B. für IDEs oder anderen Build-Systemen. Dazu verfügt Cargo über mehrere Möglichkeiten:
 
 \begin{itemize}
     \item cargo metadata-Befehl
@@ -252,7 +252,7 @@ Cargo versucht, die Integration von Tools von Drittanbietern zu vereinfachen, z.
     $ cargo metadata
 \end{lstlisting}
 
-Dieser Befehl gibt im JSON-Format alle Metadaten über ein Projekt aus. Darunter Befinden sich die Version des aktuellen Projekts sowie eine Liste der Pakete und Abhängigkeiten. Grobe Struktur:
+Dieser Befehl gibt im JSON-Format alle Metadaten über ein Projekt aus. Darunter befinden sich die Version des aktuellen Projekts sowie eine Liste der Pakete und Abhängigkeiten. Die grobe Struktur sieht so aus:
 
 \begin{lstlisting}
     {
@@ -288,7 +288,7 @@ Dadurch entsteht ein Output im JSON-Format mit Informationen über Compiler-Fehl
 
 \subsubsection{Benutzerdefinierte Befehle}
 
-Cargo ist so ausgelegt, dass es erweitert werden kann, ohne dass Cargo selbst modifiziert werden muss. Dazu muss ein Programm in der Form cargo-\textit{command} in einem der \verb"$PATH"-Verzeichnisse des Benutzers liegen. Anschließend kann es von Cargo aufgerufen werden mit \glqq cargo \textit{command}\grqq{}.Wenn ein solches Programm von Cargo aufgerufen wird, übergibt es, wie es üblich ist, als ersten Parameter den Programmnamen. Als zweites die Bezeichnung des Programms (\textit{command}). Alle weiteren Parameter in der Befehlszeile werden unverändert weitergeleitet.
+Cargo ist so ausgelegt, dass es erweitert werden kann, ohne dass Cargo selbst modifiziert werden muss. Dazu muss ein Programm in der Form cargo-\textit{command} in einem der \verb"$PATH"-Verzeichnisse des Benutzers liegen. Anschließend kann es von Cargo aufgerufen werden mit \glqq cargo \textit{command}\grqq{}. Wenn ein solches Programm von Cargo aufgerufen wird, übergibt es als ersten Parameter den Programmnamen. Als zweites die Bezeichnung des Programms (\textit{command}). Alle weiteren Parameter in der Befehlszeile werden unverändert weitergeleitet.
 
 Beispiel:
 
@@ -312,4 +312,4 @@ Obiges Programm gibt eine Liste der Parameter aus, die übergeben wurden. Es kö
     # ["/path/to/cargo-listargs", "listargs", "arg1", "arg2"]
 \end{lstlisting}
 
-Im Internet gibt es zum Zeitpunkt der Erstellung dieses Dokuments bereits über 40 benutzerdefinierte Befehle, die von der Rust-Community erstellt wurden. \cite{CargoSubcommands}
+Im Internet befanden sich im Juli 2019 bereits über 40 benutzerdefinierte Befehle, die von der Rust-Community erstellt wurden. \cite{CargoSubcommands}
