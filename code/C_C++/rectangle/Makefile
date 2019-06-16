@@ -1,10 +1,10 @@
-# Makefile for C program
+# Makefile for C++ program
 
 TARGET   = target
 OBJDIR   = $(TARGET)/objdir
-OBJ      = $(addprefix $(OBJDIR)/, $(patsubst %.c, %.o, $(wildcard *.c)))
+OBJ      = $(addprefix $(OBJDIR)/, $(patsubst %.cpp, %.o, $(wildcard *.cpp)))
 NAME     = $(TARGET)/app
-GCC	     = gcc
+GCC	     = g++
 CPPFLAGS = -Wall
 
 all: $(OBJDIR) $(NAME)
@@ -12,7 +12,7 @@ all: $(OBJDIR) $(NAME)
 $(OBJDIR):
 	mkdir -p $(OBJDIR)
 
-$(OBJDIR)/%.o: %.c
+$(OBJDIR)/%.o: %.cpp
 	$(GCC) $(CPPFLAGS) -c $< -o $@
 
 $(NAME): $(OBJ)

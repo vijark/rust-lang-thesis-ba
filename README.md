@@ -1,6 +1,6 @@
-# Bachelorarbeit: Programmieren in Rust und Vergleich mit C/C++
+# Bachelorarbeit:<br/>Programmieren in Rust und Vergleich mit C/C++
 
-## Vorläufige Gliederung
+## Inhalt
 1. Einleitung
     - Was ist Rust?
 2. Rust toolchain
