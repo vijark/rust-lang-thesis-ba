@@ -23,7 +23,7 @@ void read_username(char *username, int len) {
     fp = fopen("username.txt", "r");
 
     if (fp == NULL) {
-        printf("Something went wrong: %s\n", strerror(errno));
+        fprintf(stderr, "Something went wrong: %s\n", strerror(errno));
         exit(EXIT_FAILURE);
     }
 

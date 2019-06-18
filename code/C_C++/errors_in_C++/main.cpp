@@ -22,7 +22,7 @@ string read_username() {
         getline(file, name);
         file.close();
     } catch (const ifstream::failure &e) {
-        cout << "Exception while reading from file: " << e.what() << endl;
+        cerr << "Exception while reading from file: " << e.what() << endl;
         exit(EXIT_FAILURE);
     }
 
