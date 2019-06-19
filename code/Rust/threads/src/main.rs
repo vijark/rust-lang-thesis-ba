@@ -38,10 +38,7 @@ fn rc() {
 
         *rc_clone2.borrow_mut() = String::from("bar"); // change value
     }
-    println!(
-        "rc count when clones are out of scope: {}",
-        Rc::strong_count(&rc)
-    ); // 1
+    println!("rc count when clones are out of scope: {}", Rc::strong_count(&rc)); // 1
     println!("value of rc: {}", rc.borrow()); // "bar"
 }
 
@@ -75,33 +72,6 @@ fn arc_mutex() {
     println!("id = {}", *id);
 }
 
-fn mpsc() {
-    // mpsc 'multiple producer, single consumer'
-    // FIFO messaging system
-    let (tx, rx): (Sender<String>, Receiver<String>) = mpsc::channel();
-
-    thread::spawn(move || {
-        tx.send(String::from("this is the first message.")).unwrap();
-        tx.send(String::from("this is the second message."))
-            .unwrap();
-        tx.send(String::from("this is the third message.")).unwrap();
-        // send() takes ownership of the sended object
-    });
-
-    let receiving_thread_handle = thread::spawn(move || {
-        thread::sleep(Duration::from_secs(1));
-        while let Ok(received) = rx.recv() {
-            println!("Got: {}", received);
-        }
-    });
-    let _ = receiving_thread_handle.join();
-
-    // The following Code wouldn't work because rx was used in the
-    // receiving thread but there must be only a single consumer:
-    //
-    // let received = rx.recv().unwrap();
-}
-
 // same functionality like the C/C++ programs about threads
 fn arc_mutex_jobs() {
     let count = Arc::new(Mutex::new(0));
@@ -128,4 +98,30 @@ fn do_something(val: &Arc<Mutex<i32>>) {
     println!("job {} started", count);
     thread::sleep(Duration::from_secs(1));
     println!("job {} finished", count);
+}
+
+fn mpsc() {
+    // mpsc 'multiple producer, single consumer'
+    // FIFO messaging system
+    let (tx, rx): (Sender<String>, Receiver<String>) = mpsc::channel();
+
+    thread::spawn(move || {
+        tx.send(String::from("this is the first message.")).unwrap();
+        tx.send(String::from("this is the second message.")).unwrap();
+        tx.send(String::from("this is the third message.")).unwrap();
+        // send() takes ownership of the sended object
+    });
+
+    let receiving_thread_handle = thread::spawn(move || {
+        thread::sleep(Duration::from_secs(1));
+        while let Ok(received) = rx.recv() {
+            println!("Got: {}", received);
+        }
+    });
+    let _ = receiving_thread_handle.join();
+
+    // The following Code wouldn't work because rx was used in the
+    // receiving thread but there must be only a single consumer:
+    // 
+    // let received = rx.recv().unwrap();
 }
