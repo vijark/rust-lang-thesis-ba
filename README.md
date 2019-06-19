@@ -39,41 +39,41 @@
         - Slice Typ
     - ---
     - Modulsystem<br/>
-    \[**Rust** [modules](https://github.com/vijark/rust-lang-thesis-ba/tree/master/code/Rust/modules/src)\]<br/>
-    \[**C/C++** [header_files](https://github.com/vijark/rust-lang-thesis-ba/tree/master/code/C_C%2B%2B/header_files)\]
+    **Rust** [modules](https://github.com/vijark/rust-lang-thesis-ba/tree/master/code/Rust/modules/src)<br/>
+    **C/C++** [header_files](https://github.com/vijark/rust-lang-thesis-ba/tree/master/code/C_C%2B%2B/header_files)
     - ---
     - Objektorientierung<br/>
-    \[**Rust** [rectangle](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/rectangle/src/main.rs),
-    [employees](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/employees/src/main.rs)\]<br/>
-    \[**C/C++** [rectangle](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/rectangle/main.cpp),
-    [employees](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/employees/main.cpp)\]
+    **Rust** [rectangle](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/rectangle/src/main.rs),
+    [employees](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/employees/src/main.rs)<br/>
+    **C/C++** [rectangle](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/rectangle/main.cpp),
+    [employees](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/employees/main.cpp)
         - Kapselung
         - Vererbung
         - Traits
     - ---
     - Generische Programmierung<br/>
-    \[**Rust** [generics](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/generics/src/main.rs)\]<br/>
-    \[**C/C++** [generics](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/generics/main.cpp)\]
+    **Rust** [generics](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/generics/src/main.rs)<br/>
+    **C/C++** [generics](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/generics/main.cpp)
     - ---
     - Unit-Tests<br/>
-    \[**Rust** [testing](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/testing/src/main.rs)\]
+    **Rust** [testing](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/testing/src/main.rs)
     - ---
     - Error Handling<br/>
-    \[**Rust** [errors](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/errors/src/main.rs)\]<br/>
-    \[**C/C++** [errors_in_C](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/errors_in_C/main.c),
-    [errors_in_C++](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/errors_in_C%2B%2B/main.cpp)\]
+    **Rust** [errors](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/errors/src/main.rs)<br/>
+    **C/C++** [errors_in_C](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/errors_in_C/main.c),
+    [errors_in_C++](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/errors_in_C%2B%2B/main.cpp)
         - Fehler mit panic!
         - Fehler mit Result
         - ?-Operator
         - Error Handling in C und C++
     - ---
     - Dokumentieren mit rustdoc<br/>
-    \[**Rust** [documenting](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/documenting/src/lib.rs)\]
+    **Rust** [documenting](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/documenting/src/lib.rs)
         - Grundlegende Verwendung
         - Dokumentationstests
     - ---
     - WebAssembly<br/>
-    \[**Rust** [wasm](https://github.com/vijark/rust-lang-thesis-ba/tree/master/code/Rust/wasm)\]
+    **Rust** [wasm](https://github.com/vijark/rust-lang-thesis-ba/tree/master/code/Rust/wasm)
         - Beispielprojekt in Rust anlegen
     - ---
     <br/>
