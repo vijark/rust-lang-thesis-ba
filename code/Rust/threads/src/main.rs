@@ -7,11 +7,14 @@ use std::thread;
 use std::time::Duration;
 
 fn main() {
-    println!("Testing Reference Counted... (no threads)");
+    println!("Testing Reference Counted... (no creation of threads)");
     rc();
 
     println!("\nTesting Atomically Reference Counted...");
     arc_mutex();
+
+    println!("\nTesting Mutex...");
+    arc_mutex_jobs();
 
     println!("\nTesting multiple producer, single consumer channel...");
     mpsc();
@@ -35,7 +38,10 @@ fn rc() {
 
         *rc_clone2.borrow_mut() = String::from("bar"); // change value
     }
-    println!("rc count when clones are out of scope: {}", Rc::strong_count(&rc)); // 1
+    println!(
+        "rc count when clones are out of scope: {}",
+        Rc::strong_count(&rc)
+    ); // 1
     println!("value of rc: {}", rc.borrow()); // "bar"
 }
 
@@ -76,7 +82,8 @@ fn mpsc() {
 
     thread::spawn(move || {
         tx.send(String::from("this is the first message.")).unwrap();
-        tx.send(String::from("this is the second message.")).unwrap();
+        tx.send(String::from("this is the second message."))
+            .unwrap();
         tx.send(String::from("this is the third message.")).unwrap();
         // send() takes ownership of the sended object
     });
@@ -91,6 +98,34 @@ fn mpsc() {
 
     // The following Code wouldn't work because rx was used in the
     // receiving thread but there must be only a single consumer:
-    // 
+    //
     // let received = rx.recv().unwrap();
+}
+
+// same functionality like the C/C++ programs about threads
+fn arc_mutex_jobs() {
+    let count = Arc::new(Mutex::new(0));
+
+    let count_clone = Arc::clone(&count);
+    let thread1_handle = thread::spawn(move || {
+        do_something(&count_clone);
+    });
+
+    let count_clone = Arc::clone(&count);
+    let thread2_handle = thread::spawn(move || {
+        do_something(&count_clone);
+    });
+
+    let _ = thread1_handle.join();
+    let _ = thread2_handle.join();
+}
+
+fn do_something(val: &Arc<Mutex<i32>>) {
+    // The lock() method creates a guard like the lock_guard in C++.
+    // When it goes out of scope (RAII), the mutex is unlocked.
+    let mut count = val.lock().unwrap();
+    *count += 1;
+    println!("job {} started", count);
+    thread::sleep(Duration::from_secs(1));
+    println!("job {} finished", count);
 }
