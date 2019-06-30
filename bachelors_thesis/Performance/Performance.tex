@@ -80,14 +80,14 @@ Mithilfe von generischen Funktionen können solche Optimierungen dennoch vorgeno
     }
 \end{lstlisting}
 
-Der Vorteil von der Benutzung von generischen Funktionen besteht darin, dass Rust mehr Optimierungen vornehmen kann. Der Nachteil ist jedoch, dass die ausführbaren Binärdateien mehr Speicherplatz benötigen und das Kompilieren länger dauert.
+Der Vorteil der Benutzung von generischen Funktionen besteht darin, dass Rust mehr Optimierungen vornehmen kann. Der Nachteil ist jedoch, dass die ausführbaren Binärdateien mehr Speicherplatz benötigen und das Kompilieren länger dauert.
 
 
 \section{Benchmark-Tests}
 
-Um festzustellen, wie performant Rust-Programme im Verhältnis zu anderen Spra\-chen laufen, können verschiedene Arten von Programmen ausgeführt und ge\-mes\-sen werden. In diesem Kapitel werden Daten aus dem Computer Language Benchmarks Game\footnote{https://benchmarksgame-team.pages.debian.net/benchmarksgame/} zitiert.
+Um festzustellen, wie performant Rust-Programme im Verhältnis zu anderen Spra\-chen laufen, können verschiedene Arten von Programmen ausgeführt und ge\-mes\-sen werden. In diesem Kapitel werden Daten aus dem Computer Language Benchmarks Game\footnote{https://benchmarksgame-team.pages.debian.net/benchmarksgame/} zitiert. Die Programme können von Usern hochgeladen werden und sind im Internet frei einsehbar. Sie wurden so programmiert, dass sie übliche Mittel der jeweiligen Sprache verwenden. Beispielsweise wird in C++ der \verb"new" Operator verwendet.
 
-Dabei ist Rust 100\% und die Prozentzahlen für C und C++ werden von den Ergebnissen aus Rust berechnet.
+In den Balkendiagrammen ist Rust 100\% und die Prozentzahlen für C und C++ werden von den Ergebnissen aus Rust berechnet.
 
 \hspace{1cm}
 
@@ -113,13 +113,13 @@ In diesem Test geht es darum, einen vollständigen Binärbaum zu erstellen, den 
 
 \paragraph{fannkuch-redux} Eine Permutation von \{1,...,n\}, z. B. \{4,2,1,5,3\}. Die erste Zahl ist 4, es sollen also die ersten 4 Elemente getauscht werden. Das wird so oft wiederholt bis die 1 an der ersten Stelle ist: \{5,1,2,4,3\} \{3,4,2,1,5\} \{2,4,3,1,5\} \{4,2,3,1,5\} \{1,3,2,4,5\}.
 
-\paragraph{fasta} Generierung von DNA-Sequenzen durch Kopieren aus gegebenen Sequenzen und Zufallszahlen, dabei werden lineare und binäre Suchfunktionen verwendet.
+\paragraph{fasta} Generierung von DNA-Sequenzen durch Kopieren aus gegebenen Sequenzen und Zufallszahlen. Dabei werden lineare und binäre Suchfunktionen verwendet.
 
 \paragraph{k-nucleotide} Eine Hash-Tabelle wird zum Zählen von Vorkommen bestimmter Zeichenketten aus einer DNA-Sequenz benutzt.
 
 \paragraph{mandelbrot} Ein Mandelbrot wird auf eine $N*N$ Bitmap geplottet.
 
-\paragraph{n-body} Die Modellierung von Umlaufbahnen von Gasriesen mit einem symplektischen Integrator, also die Bewegung von Partikeln in einem Raum dessen Masse von einem einzelnen Objekt dominiert wird.
+\paragraph{n-body} Die Modellierung von Umlaufbahnen von Gasriesen mit einem symplektischen Integrator, also die Bewegung von Partikeln in einem Raum, dessen Masse von einem einzelnen Objekt dominiert wird.
 
 \paragraph{pidigits} Berechnung von Pi mithilfe von Langzahlarithmetik.
 
@@ -133,12 +133,14 @@ In diesem Test geht es darum, einen vollständigen Binärbaum zu erstellen, den 
 
 \subsection{Ausführungszeit}
 
+\vspace{-0.9cm}
+
 \begin{figure}[htbp]
 \begin{tikzpicture}
 \begin{axis}[
     xbar,
     width = \textwidth-71.9pt,
-    height = 18cm,
+    height = 17.5cm,
     y axis line style = { opacity = 0 },
     axis x line = none,
     xmin = 0,
@@ -162,20 +164,24 @@ In diesem Test geht es darum, einen vollständigen Binärbaum zu erstellen, den 
 \caption{Ausführungszeit: Rust im Verhältnis zu C und C++}
 \end{figure}
 
-In diesen Tests läuft C schneller als C++, jedoch verfügt C++ über viele zu\-sätz\-liche Funktionen, die die Programmierung erleichtern können. Zusätzliche Funktionen besitzt auch die Sprache Rust, welche durchschnittlich wie C performt.
+In diesen Tests läuft C schneller als C++, jedoch verfügt C++ über viele zu\-sätz\-liche Funktionen, die die Programmierung erleichtern können. Zusätzliche Funktionen besitzt auch die Sprache Rust, die durchschnittlich ähnlich wie C performt.
 
-Besonders bei Berechnungen mit Fließkommazahlen im Test \glqq n-body\grqq{} ist Rust sehr performant, verliert aber bei anderen Aufgaben gegenüber C/C++. Dank der schnellen Ausführungszeit eignet sich Rust für eingebettete Systeme.
+Besonders bei Berechnungen mit Fließkommazahlen im Test \glqq n-body\grqq{} ist Rust sehr performant, verliert aber bei anderen Aufgaben gegenüber C/C++. Dank der schnellen Ausführungszeit, eignet sich Rust für eingebettete Systeme.
+
+Bei eingebetteten Systemen ist das Verhalten bei einer Panik nicht definiert. Das Verhalten bei einer Panik kann in Rust jedoch neu definiert werden. \cite{EmbeddedBook}
 
 \newpage
 
 \subsection{Speicherverbrauch}
+
+\vspace{-0.9cm}
 
 \begin{figure}[htbp]
 \begin{tikzpicture}
 \begin{axis}[
     xbar,
     width = \textwidth-71.9pt,
-    height = 18cm,
+    height = 17.5cm,
     y axis line style = { opacity = 0 },
     axis x line = none,
     xmin = 0,
@@ -199,7 +205,7 @@ Besonders bei Berechnungen mit Fließkommazahlen im Test \glqq n-body\grqq{} ist
 \caption{Speicherverbrauch: Rust im Verhältnis zu C und C++}
 \end{figure}
 
-In C kann dank der Low-Level-Orientierung viel Speicher eingespart werden. Jedoch gehen hier die Ergebnisse weit auseinander wie z. B. bei den Tests \glqq fannkuch-redux\grqq{} und \glqq n-body\grqq{}.
+In C kann dank der Low-Level-Orientierung viel Speicher eingespart werden. Jedoch gehen hier die Ergebnisse weit auseinander, wie z. B. bei den Tests \glqq fannkuch-redux\grqq{} und \glqq n-body\grqq{}.
 
 Rust benötigt in den meisten Fällen nicht auffallend viel Speicher und ist dadurch als Systemprogrammiersprache geeignet.
 

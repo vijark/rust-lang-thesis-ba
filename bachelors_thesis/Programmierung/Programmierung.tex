@@ -1,15 +1,63 @@
-\chapter{Programmierung mit Rust und Unterschiede zu C/C++}
+\chapter{Programmierung mit Rust und Unterschiede zu C/C++}\label{chap:prog}
 
-In diesem Kapitel wird die Programmierung mit Rust gezeigt, dabei werden auch einige Unterschiede zu C und C++ erläutert.
+In diesem Kapitel wird die Programmierung mit Rust gezeigt. Dabei werden auch einige Unterschiede zu C und C++ erläutert.
 
 
 \section{Grundlagen}
 
-Zu den Grundlagen einer jeden Programmiersprache gehört der Umgang mit Variablen und Datentypen. Kontrollstrukturen definieren dabei die Reihenfolge, in der Berechnungen durchgeführt werden.
+Rust ist eine kompilierte Sprache. Genau wie C und C++ erzeugt sie nach dem Kompilieren eine ausführbare Datei. Sie ist außerdem eine imperative Sprache, sie besteht also aus Anweisungen und Ausdrücken. Rust wird auch vom objektorientierten Programmierparadigma beeinflusst, bietet jedoch, im Gegensatz zu C++, keine Vererbungen von Klassen an. Sie ist eine stark typisierte und statisch typisierte Sprache.
 
+\subsection{Hello, world!}\label{chap:helloworld}
+
+\begin{lstlisting}
+    fn main() {
+        println!("Hello, world!");
+    }
+\end{lstlisting}
+
+Genau wie in C oder C++ beginnt in Rust das Programm mit einer Startfunktion mit dem Namen \verb"main". Funktionen bzw. Prozeduren werden in Rust mit dem Schlüsselwort \verb"fn" vor dem Funktionsnamen und einem Block definiert. Blöcke verhalten sich in Rust genau wie in C/C++ hinsichtlich der Sichtbarkeit von Variablen (Verschattung ist möglich).
+
+Funktionen können auch mit einem Rückgabewert definiert werden:
+
+\begin{lstlisting}
+    fn example() -> bool { ...
+\end{lstlisting}
+
+Und Funktionsparameter:
+
+\begin{lstlisting}
+    fn example(number1: i32, number2: i32) -> bool { ...
+\end{lstlisting}
+
+Der Rückgabetyp wird mit einem Pfeil (\verb"->") angegeben. Parameter werden innerhalb der Klammern durch Kommata getrennt in der Form: \verb"name: typ". Der Aufruf von Funktionen ist syntaktisch wie C/C++. Funktionen werden in \autoref{chap:functions} genauer beschrieben.
+
+Im Hello World Programm wurde \verb"println!" ausgeführt. Das Ausrufezeichen besagt, dass es sich hierbei nicht um eine Funktion handelt, sondern um ein Makro. In C/C++ werden Makros von einem Präprozessor verarbeitet. Rust besitzt keinen Präprozessor, es wird also kein Code direkt eingefügt. Die Funktionsweise von Makros wird in \autoref{chap:macros} behandelt. Das Makro \verb"println!" gibt Text mit einem Zeilenumbruch auf der Kommandozeile (stdout) aus.
+
+Der erste Parameter ist immer eine Zeichenkette. Um Variablen oder Ergebnisse von Ausdrücken auszugeben, müssen im Text geschweifte Klammern, sowie weitere Parameter, welche dann an Stelle der Klammern eingefügt werden, gesetzt werden. Ohne Parameter wird nur ein Zeilenumbruch ausgegeben.
+
+\begin{lstlisting}
+    println!();
+    println!("format {} arguments", "some");
+    println!(
+        "first = {0}, second = {1}, first again = {0}",
+        1, 2
+    );
+    println!("{a} {c} {b}", a = "a", b = 'b', c = 3);
+    println!("{:.3}", 1.23456789); // 1.235
+\end{lstlisting}
+
+Die Klammern können auch nummeriert werden, falls Ausdrücke mehr als einmal ausgegeben werden sollen. Alternativ können Identifikatoren verwendet werden. Fließkommazahlen können beispielsweise mit einer bestimmten Anzahl an Nachkommastellen ausgegeben werden. Hier wird wie in C/C++ die letzte Stelle gerundet. Zeilen- und Blockkommentare sind syntaktisch aufgebaut wie in C/C++.
+
+\vspace{1cm}
 \subsection{Variablen und Mutabilität}
 
-In Rust sind Variablen standardmäßig unveränderlich. Das ist einer von vielen Faktoren, die Programmierer helfen sollen, Fehler im Code besser auffinden zu können. \cite{RustBook}
+Variablen können in Rust mit dem Schlüsselwort \verb"let" erstellt werden. Der Typ der Variable wird in den meisten Fällen von Rust erkannt. Weitere Informationen über Datentypen werden in \autoref{chap:datatypes} angesprochen, denn zunächst soll die Syntax gezeigt werden. So wird beispielsweise eine Variable \verb"x" mit dem Wert 5 erstellt:
+
+\begin{lstlisting}
+    let x = 5;
+\end{lstlisting}
+
+In Rust sind Variablen standardmäßig unveränderlich. Das ist einer von vielen Faktoren, die Programmierern helfen sollen, Fehler im Code besser finden zu können. \cite{RustBook}
 
 Ein Beispiel in Rust:
 
@@ -40,9 +88,18 @@ Beim Kompilieren erscheint folgende Fehlermeldung:
    
 \end{lstlisting}
 
-Die Fehlermeldung besagt, dass ein unveränderlicher Wert nicht verändert werden darf, und schlägt vor, den Wert veränderlich, also als \glqq mutable\grqq{}, zu deklarieren.
+Die Fehlermeldung besagt, dass ein unveränderlicher Wert nicht verändert werden darf und schlägt vor, den Wert veränderlich, also als \glqq mutable\grqq{}, zu deklarieren. Dazu wird das Schlüsselwort \verb"mut" verwendet:
 
-In C oder C++ ist jede Variablendefinition standardmäßig veränderlich, das heißt bei gleicher Vorangehensweise würde folgendes C-Programm fehlerfrei übersetzen:
+\begin{lstlisting}
+    let mut x = 5;
+    x = 10;
+    x = x + 5;
+    x += 1;
+\end{lstlisting}
+
+Die Operatoren \verb"=", \verb"+=", \verb"-=", \verb"*+", \verb"/=" und \verb"%=" funktionieren in Rust wie in C/C++. Die Operatoren für Postinkrement und Präinkrement wurden in Rust bewusst nicht implementiert, um den Code lesbarer zu gestalten.
+
+In C und C++ ist jede Variablendefinition standardmäßig veränderlich. Bei glei\-cher Vorangehensweise würde folgendes C-Programm fehlerfrei übersetzen:
 
 \begin{lstlisting}
     #include <stdio.h>
@@ -63,7 +120,7 @@ Das Schlüsselwort \verb"const" kann verwendet werden, um Werte in C/C++ konstan
     const int x = 5;
 \end{lstlisting}
 
-Wird aber beispielsweise in C versucht, ein konstant deklarierter Wert zu ver\-än\-dern, indem eine Variable mit einem nicht konstanten Typ verwendet wird, ist das Verhalten nicht definiert. \cite[p.~87]{ISO:9899:2017}
+Wird aber beispielsweise in C versucht, \verb"x" zu verändern, indem die Speicheradresse von \verb"x" dereferenziert und der Wert dahinter verändert wird, ist das Verhalten nicht definiert. \cite[p.~87]{ISO:9899:2017}
 
 Das Verhalten in folgendem Beispielprogramm ist somit nicht definiert und kann von vielen verschiedenen Faktoren abhängen:
 
@@ -96,17 +153,19 @@ Ergebnis mit dem GCC Compiler in der Version 8.3.1 auf einem Linux System (auch 
 
 \subsection{Datentypen}\label{chap:datatypes}
 
-Jede Variable in Rust hat einen bestimmten Datentyp. In Rust wird unterschieden zwischen skalaren und zusammengesetzten Typen. Rust ist eine statisch typisierte Sprache, somit müssen die Typen aller Variablen zur Kompilierzeit bekannt sein. Der Compiler kann normalerweise ableiten, welcher Typ verwenden soll basierend auf dem Wert und wie er verwendet wird. In Fällen, in denen viele Typen möglich sind, z. B. wenn ein String in einen numerischen Typ konvertiert werden soll, muss eine Typannotation hinzugefügt werden:
+Jede Variable in Rust hat einen bestimmten Datentyp. Es wird unterschieden zwi\-schen skalaren und zusammengesetzten Typen. Rust ist eine statisch typisierte Sprache, daher müssen die Typen aller Variablen zur Kompilierzeit bekannt sein. Der Compiler kann normalerweise, basierend auf Wert und Verwendungszweck einer Variable, ableiten, welcher Typ verwendet werden soll.
+
+In Fällen, in denen viele Typen möglich sind, z. B. wenn ein String in einen numerischen Typ konvertiert werden soll, muss eine Typannotation hinzugefügt werden:
 
 \begin{lstlisting}
-    let guess: u32 = "42".parse().expect("Not a number!");
+    let unsigned_number: u32 = 42;
 \end{lstlisting}
-
-Ohne Angabe des Typs würde der Rust-Compiler eine Fehlermeldung ausgeben.
 
 \subsubsection{Integer Typ}
 
-Ein Integer ist ein Datentyp für ganze Zahlen. Der Typ \verb"u32" gibt an, dass es sich um eine vorzeichenlose Ganzzahl handelt. Vorzeichenbehaftete Ganzzahltypen beginnen mit \glqq i\grqq{} an Stelle von \glqq u\grqq{} und die Zahl gibt an, wie viel Speicherplatz sie beansprucht. Folgende Tabelle zeigt die Integertypen von Rust und C:
+Ein Integer ist ein Datentyp für ganze Zahlen. Der Typ \verb"u32" gibt an, dass es sich um eine vorzeichenlose Ganzzahl handelt. Vorzeichenbehaftete Ganzzahltypen beginnen mit \glqq i\grqq{} an Stelle von \glqq u\grqq{} und die Zahl gibt an, wie viel Speicherplatz sie beansprucht. \autoref{tab:integertypes} zeigt die Integertypen von Rust und C.
+
+\vspace{1cm}
 
 \begin{table}[htbp]
 \centering
@@ -130,11 +189,12 @@ Ein Integer ist ein Datentyp für ganze Zahlen. Der Typ \verb"u32" gibt an, dass
 \hline
 \end{tabular}
 \caption{Integertypen in Rust und C/C++}
+\label{tab:integertypes}
 \end{table}
 
 In C sollen mit \verb"short" und \verb"long" verschieden lange ganzzahlige Werte zur Ver\-fü\-gung stehen, soweit dies praktikabel ist; \verb"int" wird normalerweise die natürliche Größe für eine bestimmte Maschine sein. \verb"short" belegt oft 16 Bits, \verb"long" 32 Bits und \verb"int" entweder 16 oder 32 Bits. Es steht jedem Übersetzer frei, sinnvolle Größen für seine Maschine zu wählen, nur mit den Einschränkungen, dass \verb"short" und \verb"int" wenigstens 16 Bits haben, \verb"long" mindestens 32 Bits, und dass \verb"short" nicht länger als \verb"int" und \verb"int" nicht länger als \verb"long" sein darf. \cite{ProgInC}
 
-Beispiel:
+So können die Größen der üblich verwendeten Ganzzahltypen in C ausgegeben werden:
 
 \begin{lstlisting}
     printf("%zu\n", sizeof(char));      // 1:  8-bit
@@ -143,21 +203,23 @@ Beispiel:
     printf("%zu\n", sizeof(long));      // 8: 64-bit
 \end{lstlisting}
 
-In Rust hängen die Typen \verb"isize" und \verb"usize" von der Art des Computers ab, auf dem das Programm ausgeführt wird: 64 Bits bei 64-Bit-Architekturen und 32 Bits bei 32-Bit-Architekturen.
+In Rust hängen die Typen \verb"isize" und \verb"usize" von der Art des Zielsystems ab, für das kompiliert wird: 64 Bits für 64-Bit-Architekturen und 32 Bits für 32-Bit-Architekturen. Rust ist eine statisch typisierte Sprache, daher darf dies nicht zur Laufzeit entschieden werden.
 
-In Rust wird standardmäßig der Integertyp i32 verwendet. Dieser Typ ist im Allgemeinen der schnellste Typ, auch auf 64-Bit-Systemen. Die Typen \verb"isize" und \verb"usize" können zum Indexieren von Arrays verwendet werden.
+In Rust wird standardmäßig der Integertyp i32 verwendet. Dieser Typ ist im Allgemeinen der schnellste Typ, auch auf 64-Bit-Systemen. Die Typen \verb"isize" und \verb"usize" können zum Indexieren von Felder verwendet werden.
 
 \subsubsection{Weitere Typen in Rust}
 
 \begin{itemize}
     \item Fließkomma-Typen: \verb"f32" und \verb"f64" (Standard ist \verb"f64")
-    \item Boolean: \verb"bool" true / false
+    \item Wahrheitswert: \verb"bool" true / false
     \item Zeichentyp \verb"char": Unicode, das heißt chinesische, japanische und koreanische Zeichen, Emoji, Leerzeichen mit Nullbreite sind möglich
 \end{itemize}
 
 \subsubsection{Tupel}
 
-Ein Tupel ist ein allgemeiner Weg, um einige andere Werte mit verschiedenen Typen zu einem Verbindungstyp zu gruppieren. Tupel haben eine feste Länge und können somit nicht größer oder kleiner werden nachdem sie deklariert wurden.
+Ein Tupel ist ein allgemeiner Weg, um einige andere Werte mit verschiedenen Typen zu einem Verbindungstyp zu gruppieren. Tupel haben eine feste Länge und können somit nicht größer oder kleiner werden, nachdem sie deklariert wurden.
+
+\newpage
 
 \begin{lstlisting}
     fn main() {
@@ -168,88 +230,13 @@ Ein Tupel ist ein allgemeiner Weg, um einige andere Werte mit verschiedenen Type
     }
 \end{lstlisting}
 
-\subsubsection{Arrays}
-
-Eine andere Möglichkeit, Sammlungen mehrerer Werte zu bilden, sind Arrays. Im Gegensatz zu einem Tupel muss jedes Element eines Arrays denselben Typ haben. Arrays in Rust unterscheiden sich von Arrays in einigen anderen Sprachen, da Arrays in Rust eine feste Länge haben.
-
-In Rust werden die Werte, die direkt in ein Array gespeichert werden sollen, als eine durch Kommata getrennte Liste in eckigen Klammern geschrieben:
-
-\begin{lstlisting}
-    let a = [1, 2, 3, 4, 5];
-\end{lstlisting}
-
-Arrays sind nützlich, um Daten auf dem Stack statt auf dem Heap zuweisen zu können oder um sicherzustellen, dass immer eine feste Anzahl von Elementen vorhanden sind. Ein Array ist jedoch nicht so flexibel wie der Vektortyp. Ein Vektor ist ein ähnlicher Auflistungstyp, der von der Standardbibliothek bereitgestellt wird und dessen Größe dynamisch verändert werden kann.
-
-Die Schreibweise des Array-Typs erfolgt mit eckigen Klammern mit dem Typen der Elemente gefolgt von einem Semikolon und die Anzahl der Elemente für das Array:
-
-\begin{lstlisting}
-    let a: [i32; 5] = [1, 2, 3, 4, 5];
-\end{lstlisting}
-
-Eine ähnliche Schreibweise wird zum Initialisieren eines Arrays verwendet, das für jedes Element den selben Wert enthält. Dabei wird der Anfangswert, dann ein Semikolon und die Länge des Arrays angegeben:
-
-\begin{lstlisting}
-    let a = [3; 5];
-\end{lstlisting}
-
-Das Array \verb"a" enthält 5 Elemente, die zunächst alle auf den Wert 3 gesetzt wurden. Folgender Ausdruck erzeugt das gleiche Array:
-
-\begin{lstlisting}
-    let a = [3, 3, 3, 3, 3];
-\end{lstlisting}
-
-Ein Array ist ein einzelner Speicherbereich, der auf dem Stack reserviert ist. Es kann mithilfe eines Indexes auf die Elemente zugegriffen werden:
-
-\begin{lstlisting}
-    let a = [1, 2, 3, 4, 5];
-    let first = a[0];
-    let second = a[1];
-\end{lstlisting}
-
-Wird auf ein Element zugegriffen, das außerhalb des Bereichs ist, beendet sich das Programm mit folgender Meldung:
-
-\begin{lstlisting}
-    thread 'main' panicked at 'index out of bounds: the len
-    is 5 but the index is 10', src/main.rs:5:13
-    note: Run with `RUST_BACKTRACE=1` environment variable
-    to display a backtrace.
-\end{lstlisting}
-
-Wenn in C oder C++ auf ein Element außerhalb des Bereichs eines Arrays zugegriffen wird, fällt dies beim Testen wesentlich weniger auf, da normalerweise das Programm weiter ausgeführt wird.
-
-Das ist ein Beispiel der Sicherheitsprinzipien von Rust. Viele Low-Level-Pro\-gram\-mier\-spra\-chen verzichten auf diesen Check, sodass ein ungültiger Speicherbereich indexiert werden kann. Rust verhindert dies durch sofortiges Beenden des Programms.
-
-\subsection{Funktionen}
-
-In Rust werden Funktionen und Variablennamen als Konvention in snake case geschrieben. Ein Programm, das eine Beispielfunktion enthält könnte so aussehen:
-
-\begin{lstlisting}
-    fn main() {
-        println!("Hello, world!");
-        another_function(42);
-    }
-    fn another_function(n: i32) {
-        println!("Another function with number {}.", n);
-    }
-\end{lstlisting}
-
-Eine Funktion mit Parameter enthält den Namen der Variable sowie den Typen mit einem Doppelpunkt getrennt. Bei mehreren Parametern werden diese mit Komma getrennt.
-
-Bei Funktionen mit Rückgabewerten kann am Ende des Funktionskörpers der Rückgabewert als Expression ohne Semikolon geschrieben werden. Wenn eine Funktion früh beendet werden soll, kann ein \verb"return" mit Rückgabewert benutzt werden. Der Rückgabetyp der Funktion muss mit einem Pfeil (\verb"->") geschrieben werden.
-
-\begin{lstlisting}
-    fn main() {
-        let result = add(12, 34);
-        println!("The result is {}.", result);
-    }
-    fn add(n1: i32, n2: i32) -> i32 {
-        n1 + n2
-    }
-\end{lstlisting}
+Tupel können auf einzelne Variablen zerlegt werden. Dazu werden die Variablennamen nach dem Schlüsselwort \verb"let" in Klammern geschrieben. Auf einzelne Elemente aus dem Tupel kann mit einem Index nach einem Punkt zugegriffen werden.
 
 \subsection{Kontrollstrukturen}
 
-Kontrollstrukturen definieren die Reihenfolge, in der Berechnungen durchgeführt werden. Die Entscheidung, ob Code ausgeführt werden soll oder nicht, abhängig davon, ob eine Bedingung wahr ist, und die Entscheidung, wiederholt Code aus\-zu\-füh\-ren, während eine Bedingung wahr ist, sind grundlegende Bausteine in den meisten Programmiersprachen. Die häufigsten Konstrukte, mit denen der Ausführungsfluss von Rust-Code gesteuert werden können, sind \verb"if"-Ausdrücke und Schleifen.
+Kontrollstrukturen definieren die Reihenfolge, in der Berechnungen durchgeführt werden. Die Entscheidung, ob Code ausgeführt werden soll oder nicht, abhängig davon, ob eine Bedingung wahr ist, und die Entscheidung, wiederholt Code aus\-zu\-füh\-ren, während eine Bedingung wahr ist, sind grundlegende Bausteine in den meisten Programmiersprachen. In Rust gibt es Ausdrücke, die einen Wert repräsentieren und Anweisungen, welche mit Strichpunkten voneinander getrennt werden.
+
+Die häufigsten Konstrukte, mit denen der Ausführungsfluss von Rust-Code gesteuert werden können, sind \verb"if"-Ausdrücke und Schleifen.
 
 \subsubsection{\texttt{if}-Anweisungen}
 
@@ -265,31 +252,27 @@ Beispiel:
     }
 \end{lstlisting}
 
-Diese Anweisungen sind syntaktisch wie C oder C++, mit dem Unterschied, dass keine Klammern bei der Expression benötigt wird.
+Diese Anweisungen sind syntaktisch wie C oder C++, mit dem Unterschied, dass keine Klammern bei dem Ausdruck mit dem Wahrheitswert benötigt werden.
 
-In Rust muss der Typ der Expression ein Boolean sein. Folgendes Programm wird also nicht übersetzt:
+In Rust muss dieser Ausdruck \verb"true" oder \verb"false" sein. Folgendes Programm wird also nicht übersetzt, weil es sich hier um den Zahlenwert \verb"i32" handelt:
 
-\begin{lstlisting}
-    fn main() {
-        let number = 3;
-        if number {                     // type must be bool
-            println!("number was three");
-        }
+\begin{lstlisting}=
+    let number = 3;
+    if number {                         // type must be bool
+        println!("number was three");
     }
 \end{lstlisting}
 
-C und C++ prüfen bei einer \verb"if"-Anweisung mit einem Integer Wert nur, ob dieser den Wert 0 hat. Da in Rust ein Boolean Typ benötigt wird, muss das obige Programm umgeschrieben werden:
+C und C++ prüfen bei einer \verb"if"-Anweisung mit einem Integer Wert nur, ob dieser den Wert 0 hat. Da in Rust ein boolescher Typ benötigt wird, muss das obige Programm umgeschrieben werden:
 
 \begin{lstlisting}
-    fn main() {
-        let number = 3;
-        if number != 0 {
-            println!("number was something other than 0");
-        }
+    let number = 3;
+    if number != 0 {
+        println!("number was something other than 0");
     }
 \end{lstlisting}
 
-Mehrere Bedingungen können auch in Rust in einer \verb"else if"-Anweisung behandelt werden:
+Auch in Rust können mehrere Bedingungen in einer \verb"else if"-Anweisung behandelt werden:
 
 \begin{lstlisting}
     let number = 6;
@@ -305,7 +288,16 @@ Mehrere Bedingungen können auch in Rust in einer \verb"else if"-Anweisung behan
     }
 \end{lstlisting}
 
-In Rust kann die \verb"if"-Anweisung eine Expression verpacken um z. B. Werte von Variablen zu definieren, ähnlich wie der \verb"?:"-Operator in C/C++:
+In Rust kann die \verb"if"-Anweisung ein Ausdruck sein, um z. B. Werte von Variablen zu definieren. Ähnlich wie der \verb"?:" Operator in C/C++.
+
+So wird der ?: Operator wird in C verwendet:
+
+\begin{lstlisting}
+    bool condition = true;
+    int number = condition ? 5 : 6;
+\end{lstlisting}
+
+Der Wert von \verb"number" ist also 5, weil \verb"condition" wahr ist. Dieser Operator aus C/C++ kann auch in Rust mit einer \verb"if"-Anweisung programmiert werden:
 
 \begin{lstlisting}
     let condition = true;
@@ -316,13 +308,56 @@ In Rust kann die \verb"if"-Anweisung eine Expression verpacken um z. B. Werte vo
     };
 \end{lstlisting}
 
+Hier fällt auf, dass kein Strichpunkt innerhalb der geschweiften Klammern steht. Wenn in Rust am Ende eines Blocks eine Anweisung ohne Strichpunkt steht, wird der Block von Rust als Ausdruck gewertet. In Verbindung mit einer \verb"if"-Anweisung kann so der \verb"?:" Operator aus C/C++ programmiert werden.
+
 Da Rust eine statisch typisierte Sprache ist, muss der Typ beim Kompilieren bekannt sein. Das bedeutet, dass bei dieser \verb"if"-Anweisung der Typ einheitlich sein muss. Im letzten Beispiel ist \verb"number" vom Typ \verb"i32".
+
+\subsubsection{\texttt{match}}
+
+In Rust gibt es keine \verb"switch"-Anweisung wie in C/C++. Die Alternative in Rust sind \verb"match"-Anweisungen bzw. -Ausdrücke. Die Syntax sieht so aus:
+
+\begin{lstlisting}
+    let number = 30;
+
+    match number {
+        1 => println!("number is 1"),
+        2 | 3 | 5 | 7 | 11 => println!("small prime num"),
+        20..=30 => println!("number is between 20 and 30"),
+        _ => println!("number was something different"),
+    }
+\end{lstlisting}
+
+Nach dem Schlüsselwort \verb"match" muss ein Ausdruck geschrieben werden. Dieser kann dann unterschieden werden. Es unterscheidet zwischen einem einzelnen Wert, mehreren Werten und einem Wertebereich. Der Unterstrich ist ver\-gleich\-bar mit \verb"default" aus C/C++. Nach dem Pfeil (\verb"=>") folgt der Code, der bedingt ausgeführt werden soll. Kommata trennen die Fälle voneinander.
+
+Der Wert des Ausdrucks kann weitergegeben werden, indem ein Bezeichner verwendet wird. Dieser kann mit \verb"if" und einem booleschen Ausdruck zusätzlich überprüft werden. Es kann nach dem Pfeil auch ein Block mit mehreren Anwei\-sungen folgen:
+
+\begin{lstlisting}
+    match number {
+        n if n < 100 => {
+            println!("number is smaller than 100");
+            println!("and the number is {}", n);
+        }
+        n => println!("the number is {}", n),
+    }
+\end{lstlisting}
+
+\verb"match" kann auch als Ausdruck interpretiert werden:
+
+\begin{lstlisting}
+    let result = match number {
+        1 => "one",
+        2..=10 => "between two and ten",
+        _ => "i don't know",
+    };
+\end{lstlisting}
+
+Das Schlüsselwort \verb"break" kann in Rust nur in Schleifen verwendet werden, daher ist ein \glqq Fallthrough\grqq{} hier nicht nicht möglich.
 
 \subsubsection{Schleifen}
 
 Rust hat drei Arten von Schleifen: loop, while und for.
 
-Loop-Schleifen führen Code so oft aus, bis sie explizit mit dem Schlüsselwort \verb"break" gestoppt werden. Schleifen können in Rust auch als Expression verwendet werden wenn an dem \verb"break" eine Expression angefügt wird:
+\verb"loop"-Schleifen führen Code so oft aus, bis sie explizit mit dem Schlüsselwort \verb"break" gestoppt werden. \verb"loop"-Schleifen können in Rust auch als Ausdruck interpretiert werden, wenn nach dem \verb"break" ein Ausdruck angefügt wird:
 
 \begin{lstlisting}
     fn main() {
@@ -337,6 +372,8 @@ Loop-Schleifen führen Code so oft aus, bis sie explizit mit dem Schlüsselwort 
     }
 \end{lstlisting}
 
+\newpage
+
 \verb"while"-Schleifen gibt es auch in C und C++. In Rust ist die Syntax ähnlich:
 
 \begin{lstlisting}
@@ -350,7 +387,27 @@ Loop-Schleifen führen Code so oft aus, bis sie explizit mit dem Schlüsselwort 
     }
 \end{lstlisting}
 
-Das Programm gibt alle Werte aus dem Array aus. Alternativ kann hier mit einer \verb"for"-Schleife gearbeitet werden. For-Schleifen funktionieren in Rust anders als in C oder C++, sie gleichen ehr einer \verb"for"-\verb"each"-Schleife aus Java. Das bedeutet, dass der Code innerhalb der Schleife für jedes Element aus einer Sammlung einmal ausgeführt wird.
+\verb"while"-Schleifen können nicht als Ausdruck interpretiert werden, da nicht si\-cher\-ge\-stellt werden kann, dass ein \verb"break" aufgerufen wird. Rusts Kontrollflussanalyse behandelt \verb"while true" anders als \verb"loop", da der Compiler weiß, dass \verb"loop" immer ausgeführt wird. Bei der Zuweisung von deklarierten Variablen macht dies einen Unterschied:
+
+\begin{lstlisting}
+    let var;
+    loop {
+        var = 1;
+        break;
+    }
+    println!("{}", var);  // works fine
+
+    let var;
+    while true {
+        var = 1;
+        break;
+    }
+    println!("{}", var);  // possibly uninitialized variable
+\end{lstlisting}
+
+Um ein Feld oder andere iterierbare Typen (z. B. Vektoren) zu durchlaufen, kann mit einer \verb"for"-Schleife gearbeitet werden. Diese Schleifen funktionieren in Rust anders als in C oder C++. Sie erinnern an \verb"for"-\verb"each"-Schleifen aus Java. Das be\-deu\-tet, dass der Code innerhalb der Schleife für jedes Element aus einer Sammlung einmal ausgeführt wird.
+
+\newpage
 
 \begin{lstlisting}
     fn main() {
@@ -361,30 +418,179 @@ Das Programm gibt alle Werte aus dem Array aus. Alternativ kann hier mit einer \
     }
 \end{lstlisting}
 
-Mit \verb"for"-Schleifen kann in Rust die Stabilität des Programms erhöht werden, da Zugriffe außerhalb eines Arrays verhindert werden können.
+Der Aufruf von \verb"iter()" erzeugt einen Iterator, welcher in \verb"for"-Schleifen verwendet werden kann. Mit \verb"for"-Schleifen kann in Rust die Stabilität des Programms erhöht werden, da Zugriffe außerhalb eines Felds verhindert werden können.
 
+\subsection{Felder}\label{chap:array}
 
-\section{Ownership}
+Eine andere Möglichkeit, Sammlungen mehrerer Werte zu bilden, sind Felder. Im Gegensatz zu einem Tupel, muss jedes Element eines Felds denselben Typ haben. Felder in Rust unterscheiden sich von Felder in einigen anderen Sprachen, da Felder in Rust eine feste Länge haben, die zur Kompilierzeit festgelegt wird.
 
-Ownership ist ein einzigartiges Merkmal von Rust. Es ermöglicht Speichersicherheit zur Kompilierzeit ohne die Notwendigkeit eines Garbage Collectors. Daher ist es wichtig, das Ownership-Prinzip als Programmierer zu verstehen. In diesem Kapitel werden Ownership und damit zusammenhängende Eigenschaften wie Borrowing, Slices und wie Rust Daten im Arbeitsspeicher ablegt, beschrieben.
+In Rust werden die Werte, die direkt in ein Feld gespeichert werden sollen, als eine durch Kommata getrennte Liste in eckigen Klammern geschrieben:
+
+\begin{lstlisting}
+    let a = [1, 2, 3, 4, 5];
+\end{lstlisting}
+
+Ein Feld ist ein einzelner Speicherbereich, der auf dem Stack reserviert ist. Sie sind nützlich, um si\-cher\-zu\-stel\-len, dass immer eine feste Anzahl von Elementen vorhanden ist. Felder können in Rust nicht wie in C oder C++ auf dem Heap erstellt werden, da die Größe zur Kompilierzeit bekannt sein muss. Die Elemente innerhalb eines Felds können jedoch Zeiger auf den Heap beinhalten. Alternativ kann der Vektortyp verwendet werden, welcher die Werte immer auf dem Heap alloziert und dessen Größe dynamisch zur Laufzeit verändert werden kann. Wenn ein Feld einer Funktion übergeben werden soll, kann der Slice Typ verwendet werden, \autoref{chap:slice} zeigt die Verwendung von Slices. Die Begriffe Stack und Heap haben in Rust dieselbe Bedeutung wie in C und C++.
+
+Die Schreibweise des Feldtyps erfolgt mit eckigen Klammern mit dem Typen der Elemente, gefolgt von einem Semikolon und der Anzahl der Elemente für das Feld:
+
+\begin{lstlisting}
+    let a: [i32; 5] = [1, 2, 3, 4, 5];
+\end{lstlisting}
+
+Eine ähnliche Schreibweise wird zum Initialisieren eines Felds verwendet, das für jedes Ele\-ment denselben Wert enthält:
+
+\begin{lstlisting}
+    let a = [3; 5];
+\end{lstlisting}
+
+Das Feld \verb"a" enthält 5 Elemente mit dem Wert 3. Folgender Code erzeugt das gleiche Feld:
+
+\begin{lstlisting}
+    let a = [3, 3, 3, 3, 3];
+\end{lstlisting}
+
+Es kann mithilfe eines Index auf die Elemente zugegriffen werden:
+
+\begin{lstlisting}
+    let first = a[0];
+    let second = a[1];
+\end{lstlisting}
+
+Wird auf ein Element zugegriffen, das außerhalb des Bereichs ist, beendet sich das Programm mit folgender Meldung:
+
+\begin{lstlisting}
+    thread 'main' panicked at 'index out of bounds: the len
+    is 5 but the index is 10', src/main.rs:5:13
+    note: Run with `RUST_BACKTRACE=1` environment variable
+    to display a backtrace.
+\end{lstlisting}
+
+Mit statischen Indizes können diese Fehler beim Kompilieren erkannt werden:
+
+\begin{lstlisting}
+    let array = [1, 2, 3, 4, 5];
+
+    array[0];
+    array[10];                  // compiler error: idx is 10
+    array[(2 * 9  + 2) / 4];    // compiler error: idx is 5
+
+    let index = 200;
+    array[index];               // runtime error
+\end{lstlisting}
+
+Wenn in C oder C++ auf ein Element außerhalb des Bereichs eines Felds zugegriffen wird, fällt dies beim Testen wesentlich seltener auf, da normalerweise das Programm weiter ausgeführt wird.
+
+Das ist ein Beispiel der Sicherheitsprinzipien von Rust. Viele Low-Level-Pro\-gram\-mier\-spra\-chen verzichten auf diesen Check, sodass ein ungültiger Speicherbereich indexiert werden kann. Rust verhindert dies durch ein sofortiges Beenden des Programms.
+
+\subsection{Funktionen}\label{chap:functions}
+
+Die grobe Struktur von Funktionen wurde bereits mit dem Hello World Programm in \autoref{chap:helloworld} gezeigt. Ein Programm, das eine Beispielfunktion enthält, könnte so aussehen:
+
+\begin{lstlisting}
+    fn main() {
+        println!("Hello, world!");
+        another_function(42);
+    }
+    fn another_function(n: i32) {
+        println!("Another function with number {}.", n);
+    }
+\end{lstlisting}
+
+Eine Funktion mit Parameter enthält den Namen der Variable, sowie den mit einem Doppelpunkt getrennten Typen. Bei mehreren Parametern werden diese mit Komma getrennt.
+
+Bei Funktionen mit Rückgabewerten, kann am Ende des Funktionskörpers ein Ausdruck als Rückgabewert ohne Strichpunkt geschrieben werden, weil der Block von Rust daduch als Ausdruck interpretiert werden kann. Wenn eine Funktion früh beendet werden soll, kann wie in C/C++ das Schlüsselwort \verb"return" mit einem Ausdruck als Rückgabewert benutzt werden. Der Rückgabetyp der Funktion muss mit einem Pfeil (\verb"->") angegeben werden.
+
+\begin{lstlisting}
+    fn main() {
+        let result = add(12, 34);
+        println!("The result is {}.", result);
+    }
+    fn add(n1: i32, n2: i32) -> i32 {
+        n1 + n2
+    }
+\end{lstlisting}
+
+Anders als in C/C++ müssen in Rust Funktionen nicht vor der aufrufenden Funktion definiert oder deklariert werden.
+
+\subsection{Makros}\label{chap:macros}
+
+Bisher wurde in den Codebeispielen regelmäßig das Makro \verb"println!" verwendet. Mit Makros kann Code geschrieben werden, der anderen Code generiert. Dieses Konzept wird Metaprogrammierung genannt. Im Gegensatz zu Funktionen können Makros eine variable Anzahl an Parametern übergeben werden. Makros werden wie in C/C++ extrahiert, bevor der Compiler den Code interpretiert. Der Nachteil von Makros gegenüber Funktionen ist, dass sie komplexer sind. Sie sind schwerer zu lesen, zu verstehen und zu pflegen. Makros müssen, anders als Funktionen, vor der aufrufenden Funktion bekannt gemacht werden. 
+
+Makros erinnern an \verb"match"-Anweisungen. Das heißt, sie unterscheiden zwischen Muster bzw. Patterns. Ein Makro kann beispielsweise so definiert werden:
+
+\begin{lstlisting}
+    macro_rules! my_macro {
+        (1) => { "one" };
+        (2) => { "two" };
+        (3) => { "three" };
+    }
+\end{lstlisting}
+
+Für die Definition eines Makros muss das Schlüsselwort \verb"macro_rules!" zusammen mit dem Namen angegeben werden. Danach folgen in einem Block die Muster, die erkannt werden sollen. Ein Pfeil (\verb"=>") zeigt auf einen Block mit den Anweisungen, die durchgeführt werden, bzw. mit dem Ausdruck, der zurückgegeben werden soll.
+
+\begin{lstlisting}
+    println!("{} {} {}",
+        my_macro!(1),
+        my_macro!(2),
+        my_macro!(3)
+    );
+    // prints "one two three"
+\end{lstlisting}
+
+Die Parameter beim Aufruf eines Makros müssen immer mit einem Muster übereinstimmen.
+
+\begin{lstlisting}
+    my_macro!(4); // compiler error: unexpected token '4'
+\end{lstlisting}
+
+Die Muster von Makros unterscheiden sich von Mustern aus \verb"match", da sie auch Rust Code erkennen können. Komplexere Muster können verwendet werden:
+
+\begin{lstlisting}
+    macro_rules! my_print_macro {
+        ( $( $x:expr ),* ) => {
+            $(
+                println!("{}", $x);
+            )*
+        };
+    }
+\end{lstlisting}
+
+Auch hier befindet sich das Muster innerhalb von Runden Klammern, gefolgt von einem Pfeil. Die Syntax \verb"$()" fängt ein Codemuster auf; \verb"$x:expr" besagt, dass ein Ausdruck gelesen werden soll. Um eine beliebige Anzahl an Ausdrücken zu filtern, kann \verb",*" nach einem \verb"$()" verwendet werden. Wiederholungsoperatoren geben Makros in Rust mehr Flexibilität als in C/C++. Es gibt insgesamt drei verschiedene Arten:
+
+\begin{itemize}
+    \item \textbf{\texttt{*}}\hspace{10pt}0 oder mehr Wiederholungen,
+    \item \textbf{\texttt{+}}\hspace{10pt}1 oder mehr Wiederholungen,
+    \item \textbf{\texttt{?}}\hspace{10pt}0 oder 1 Wiederholung.
+\end{itemize}
+
+Der Ausdruck \verb"$()*" führt für jedes gefundene Muster den Code einmal aus. Die Ausdrücke (expr) können mit einem Dollarzeichen verwendet werden. Die Funktionsweise ist vergleichbar mit einer \verb"for"-Schleife.
+
+Die Entwickler von Rust haben angekündigt, dass dieses System erneuert wird. Die Erstellung von Makros mit \verb"macro_rules!" wird langfristig also nicht mehr unterstützt werden.
+
+\section{Ownership}\label{chap:ownership}
+
+Ownership ist ein einzigartiges Merkmal von Rust. Es ermöglicht Speichersicherheit zur Kompilierzeit, ohne die Notwendigkeit eines Garbage Collectors. Daher ist es für Programmierer wichtig, das Ownership-Prinzip als Programmierer zu verstehen. In diesem Kapitel werden Ownership und damit zusammenhängende Eigenschaften beschrieben.
 
 \subsection{Funktionsweise von Ownership}
 
-Alle Computerprogramme müssen Arbeitsspeichermanagement betreiben. Man\-che Sprachen benutzen einen Garbage Collector, welcher während der Programmlaufzeit nach nicht mehr verwendeten Speicher sucht und diesen anschließend frei gibt. In andern Sprachen muss der Programmierer explizit Speicher zuweisen und freigeben. Rust geht anders vor: Speicher wird durch ein System von Besitz und einen Satz an Regeln gestützt, welches der Compiler zur Kompilierzeit überprüft, sodass das Programm zur Laufzeit nicht gebremst wird.
+Alle Computerprogramme müssen Arbeitsspeichermanagement betreiben. Man\-che Sprachen benutzen einen Garbage Collector, welcher während der Programmlaufzeit nach nicht mehr verwendeten Speicher sucht und diesen anschließend frei gibt. In andern Sprachen muss der Programmierer explizit Speicher zuweisen und freigeben. Rust geht anders vor: Speicher wird durch ein System von Besitz und einen Satz an Regeln gestützt, welche der Compiler zur Kompilierzeit überprüft, sodass das Programm zur Laufzeit nicht gebremst wird.
 
 \subsubsection{Regeln}
 
 \begin{itemize}
     \item Jeder Wert in Rust hat eine Variable, die als Eigentümer bezeichnet wird.
-    \item Es gibt für jeden Wert nur einen aktiven Eigentümer.
-    \item Wenn der Besitzer den Gültigkeitsbereich verlässt, wird der Wert gelöscht.
+    \item Es gibt für jeden Wert nur einen einzelnen aktiven Eigentümer.
+    \item Wenn der Besitzer den Gültigkeitsbereich der Lebensdauer verlässt, wird der Wert gelöscht.
 \end{itemize}
+
+Die Lebensdauer und Sichtbarkeit von Variablen verhalten sich in Rust wie in C/C++. Verschattungen von Variablen sind daher möglich, ohne dass die Lebensdauer von verschatteten Variablen beeinflusst wird.
 
 \subsubsection{Beispiel: String}
 
-Um die Eigentumsregeln zu veranschaulichen, ist ein komplexerer Datentyp not\-wen\-dig als die, die in \autoref{chap:datatypes} behandelt wurden, denn diese werden auf dem Stack gespeichert. In diesem Beispiel sollen Daten, die auf dem Heap gespeichert werden, betrachtet werden um zu veranschaulichen, wie Rust erkennt, wann diese Daten zu bereinigen sind. Hierfür wird im Folgenden der Typ \verb"String" verwendet. Diese Aspekte gelten auch für andere komplexe Datentypen, die von der Standardbibliothek bereitgestellt werden.
+Um die Eigentumsregeln zu veranschaulichen, ist ein komplexerer Datentyp not\-wen\-dig, als die, die in \autoref{chap:datatypes} behandelt wurden, denn diese werden auf dem Stack gespeichert. In diesem Beispiel sollen Daten, die auf dem Heap gespeichert werden, betrachtet werden, um zu veranschaulichen, wie Rust erkennt, wann diese Daten zu bereinigen sind. Hierfür wird im Folgenden der Typ \verb"String" verwendet. Diese Aspekte gelten auch für andere komplexe Datentypen, die von der Standardbibliothek bereitgestellt werden.
 
-Wenn ein Rust-Programm eine Eingabe von einem Benutzer speichern möchte, muss ein Datentyp verwendet werden, welche eine variable Länge haben kann. Einen solchen String kann man in Rust zum Beispiel mit der \verb"from"-Funktion erstellen:
+Wenn ein Rust-Programm eine Eingabe von einem Benutzer speichern möchte, muss ein Datentyp verwendet werden, welcher eine variable Länge haben kann. Einen solchen String kann man in Rust zum Beispiel mit der \verb"from"-Funktion erstellen:
 
 \begin{lstlisting}
     let mut s = String::from("hello");
@@ -392,21 +598,21 @@ Wenn ein Rust-Programm eine Eingabe von einem Benutzer speichern möchte, muss e
     println!("{}", s);                  // 'hello, world!'
 \end{lstlisting}
 
-Um einen veränderlichen String zu erzeugen, muss Speicherplatz auf dem Heap zugewiesen werden, dessen größe zur Kompilierzeit unbekannt ist. Das heißt:
+Der Aufruf \verb"String::from()" erzeugt ein Objekt mit einer Zeichenkette, die auf den Heap zugewiesen wird. In \autoref{chap:oop} wird objektorientierte Programmier\-ung erläutert. Zunächst ist wichtig zu verstehen, dass der Heap verwendet wird, um einen veränderlichen String zu erzeugen, dessen Größe zur Kompilierzeit unbekannt sein kann. Das heißt:
 
 \begin{enumerate}
     \item Speicherplatz muss vom Betriebssystem zur Laufzeit bereitgestellt werden und
     \item der Speicherplatz muss wieder freigegeben werden, wenn der String nicht mehr benötigt wird.
 \end{enumerate}
 
-Der erste Teil wird manuell vom Programmierer beim Aufruf von \verb"String::from" initiiert. Der zweite Teil geschieht automatisch intern durch die Methode \verb"drop", sobald der Besitzer den Gültigkeitsbereich verlässt, zum Beispiel am Ende eines Blocks.
+Der erste Teil wird manuell vom Programmierer beim Aufruf von \verb"String::from" initiiert. Der zweite Teil geschieht automatisch intern durch die Methode \verb"drop", sobald der Besitzer den Gültigkeitsbereich verlässt. Zum Beispiel am Ende eines Blocks.
 
 \begin{lstlisting}
     {
         let s = String::from("hello");
         // s is valid from this point forward
     
-        // doo stuff with s
+        // do stuff with s
     }                    // this scope is now over, and s is
                          // no longer valid
 \end{lstlisting}
@@ -424,7 +630,17 @@ Mehrere Variablen können in Rust auf unterschiedliche Weise mit denselben Daten
     let y = x;
 \end{lstlisting}
 
-Hier wird der Wert 5 an die Konstante \verb"x" gebunden und anschließend eine Kopie von \verb"x" an die Konstante \verb"y" gebunden. Der Wert wird hier kopiert, da Integer eine feste Größe im Speicher haben und auf dem Stack gespeichert werden.
+Hier wird der Wert 5 an die Konstante \verb"x" gebunden und anschließend eine Kopie von \verb"x" an die Konstante \verb"y" gebunden. Der Wert wird hier kopiert, da Integer ein primitiver Datentyp ist. Eigentum primitiver Datentypen kann nicht übergeben werden (Move nicht möglich). Sie werden vollständig kopiert. In der Regel kann kein Eigentum einfacher Skalarwerte übertragen werden. Einige der Typen sind:
+
+\begin{itemize}
+    \item Alle Integer-Typen, z. B. \verb"u32"
+    \item Boolean-Typ, \verb"bool" mit den Werten \verb"true" und \verb"false"
+    \item Alle Fließkommazahlen wie z. B. \verb"f64"
+    \item Zeichentyp \verb"char"
+    \item Tupel, wenn sie nur vorher genannte Typen beinhalten, z. B. \verb"(i32, i32)", jedoch nicht \verb"(i32, String)"
+\end{itemize}
+
+\newpage
 
 Beispiel mit String:
 
@@ -433,7 +649,7 @@ Beispiel mit String:
     let s2 = s1;
 \end{lstlisting}
 
-Dies sieht dem vorherigen Code sehr ähnlich, aber die Funktionsweise ist nicht dieselbe, denn Strings werden in Rust im Heap gespeichert.
+Dies sieht dem vorherigen Code sehr ähnlich, aber die Funktionsweise ist nicht dieselbe, denn Stringobjekte benutzen den Heap.
 
 \begin{figure}[htbp]
     \centering
@@ -442,16 +658,16 @@ Dies sieht dem vorherigen Code sehr ähnlich, aber die Funktionsweise ist nicht 
     \label{fig:tabelle1}
 \end{figure}
 
-\autoref{fig:tabelle1} zeigt die Bestandteile eines String. Er besteht aus drei Teilen, zu sehen in der linken Tabelle: ein Pointer auf den Speicher, der den String enthält, die Länge und die Kapazität. Diese Datengruppe wird auf dem Stack gespeichert. In der rechten Tabelle ist sich der Speicher auf dem Heap dargestellt.
-
-Bei der Zuweisung von \verb"s1" zu \verb"s2" werden nur die String-Daten kopiert, das heißt der Pointer, die Länge und die Kapazität, welche sich auf dem Stack befinden. Die Daten des Heaps werden nicht kopiert.
+\autoref{fig:tabelle1} zeigt die Bestandteile eines String. Er besteht aus drei Teilen, zu sehen in der linken Tabelle: ein Pointer auf den Speicher, der den String enthält, die Länge und die Kapazität. Wenn die Kapazität nicht mehr ausreicht, vergrößert sie sich automatisch. Dabei wird der Speicherplatz nach jeder erneuten Allokation verdoppelt. Diese Datengruppe wird auf dem Stack gespeichert. In der rechten Tabelle ist sich der Speicher auf dem Heap dargestellt.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.9]{Programmierung/Tabelle2.pdf}
-    \caption{Repräsentation des Speichers eines String: Kopie auf dem Stack}
+    \caption{Repräsentation des Speichers eines String: Kopie}
     \label{fig:tabelle2}
 \end{figure}
+
+Im letzten Codebeispiel werden bei der Zuweisung von \verb"s1" zu \verb"s2" nur die Stringdaten, also ein Pointer, die Länge und die Kapazität kopiert, welche sich auf dem Stack befinden. Die Daten des Heaps werden nicht kopiert. \autoref{fig:tabelle2} zeigt eine mögliche Darstellung.
 
 Wenn Rust eine vollständige Kopie gemacht hätte, würden die Daten wie auf \autoref{fig:tabelle3} aussehen und die Operation \verb"s2 = s1" wäre hinsichtlich der Lauf\-zeit\-leis\-tung sehr teuer.
 
@@ -462,26 +678,23 @@ Wenn Rust eine vollständige Kopie gemacht hätte, würden die Daten wie auf \au
     \label{fig:tabelle3}
 \end{figure}
 
-Sobald eine Variable außerhalb des Gültigkeitsbereichs gelangt, wird der Spei\-cher aus dem Heap gelöscht. Aber da \autoref{fig:tabelle2} zwei Variablen zeigt, die auf den selben Speicherbereich im Heap zeigen, würde zwei mal der Speicherbereich freigegeben werden. Das ist bekannt als \glqq double free\grqq{}-Error und kann zu Speicherbeschädigungen und möglicherweise zu Sicherheitsanfälligkeiten führen.
+Sobald eine Variable außerhalb des Gültigkeitsbereichs der Lebensdauer gelangt, wird der Spei\-cher aus dem Heap gelöscht. Aber da der Speicherbereich in \autoref{fig:tabelle2} von zwei Variablen referenziert wird, würde zwei mal der Speicherbereich freigegeben werden. Das ist bekannt als \glqq double free\grqq{}-Error und kann zu Speicherbeschädigungen und Sicherheitsanfälligkeiten führen.
 
-Um die Speichersicherheit zu gewährleisten, hält Rust \verb"s1" für ungültig und muss somit nichts löschen, wenn \verb"s1" den Gültigkeitsbereich verlässt.
+Um die Speichersicherheit zu gewährleisten, hält Rust \verb"s1" für ungültig und muss somit nichts löschen, wenn \verb"s1" die Lebensdauer verlässt.
 
-Das hat zu Folge, dass \verb"s1" nicht mehr genutzt werden kann, nachdem es \verb"s2" zugewiesen wurde:
+Das hat zur Folge, dass \verb"s1" nicht mehr genutzt werden kann, nachdem es \verb"s2" zugewiesen wurde:
 
 \begin{lstlisting}
     let s1 = String::From("hello");
     let s2 = s1;
-
     println!("{}, world!", s1);         // error
 \end{lstlisting}
 
 Daraus entsteht folgende Fehlermeldung:
 
-
 \begin{lstlisting}
     error[E0382]: borrow of moved value: `s1`
      --> src/main.rs:5:28
-      |
     3 |     let s1 = String::from("hello");
       |         -- move occurs because `s1` has type
     `std::string::String`, which does not implement the
@@ -502,7 +715,9 @@ Diese Art von Kopieren, welche die erste Variable ungültig macht, wird in Rust 
     \label{fig:tabelle4}
 \end{figure}
 
-Folglich gibt es in Rust keine \glqq double free\grqq{}-Error, da der Speicher nur einmal freigegeben wird, nämlich wenn \verb"s2" den Gültigkeitsbereich verlässt.
+Folglich gibt es in Rust keinen \glqq double free\grqq{}-Error, da der Speicher nur einmal freigegeben wird, nämlich wenn \verb"s2" den Gültigkeitsbereich verlässt.
+
+\newpage
 
 \subsubsection{Variablen und Daten: Clone}
 
@@ -517,63 +732,30 @@ Wenn eine vollständige Kopie erstellt werden soll, kann die Methode \verb"clone
 
 Der Code kompiliert ohne Fehlermeldungen und erzeugt explizit das in \autoref{fig:tabelle3} gezeigte Verhalten, bei dem auch die Heap-Daten kopiert werden.
 
-\subsubsection{Stack-Only-Daten kopieren}
-
-Primitive Datentypen, die komplett auf dem Stack gespeichert sind, können nicht übergeben werden (Move nicht möglich), sie können nur vollständig kopiert werden. Darum würde folgender Code ohne Fehler übersetzen:
-
-\begin{lstlisting}
-    let x = 5;
-    let y = x;
-
-    println!("x = {}, y = {}", x, y);
-\end{lstlisting}
-
-Integer besitzen eine feste Speichergröße zur Kompilierzeit und es macht keinen Unterschied, sie mit \verb"clone" zu kopieren. Wenn ein Typ den \verb"Copy"-Trait besitzt, kann die erste Variable nach der Zuweisung weiter verwendet werden. In der Regel kann jede Gruppe einfacher Skalarwerte über den Stack vollständig kopiert werden. Einige der Typen sind:
-
-\begin{itemize}
-    \item Alle Integer-Typen, z. B. \verb"u32"
-    \item Boolean-Typ, \verb"bool" mit den Werten \verb"true" und \verb"false"
-    \item Alle Fließkommazahlen wie z. B. \verb"f64"
-    \item Zeichentyp \verb"char"
-    \item Tupel, wenn sie nur Typen beinhalten, die den \verb"Copy"-Trait implementieren z. B. \verb"(i32, i32)", jedoch nicht \verb"(i32, String)"
-\end{itemize}
-
 \subsubsection{Ownership und Funktionen}
 
-Die Semantik für die Übergabe eines Wertes an eine Funktion ähnelt derjenigen, die einer Variablen einen Wert zuweist. Beim Übergeben einer Variablen an eine Funktion wird genauso wie bei einer Zuweisung verschoben oder kopiert. Folgendes Programm enthält ein Beispiel mit einigen Anmerkungen, wann Variablen in den Geltungsbereich gelangen und wieder herauskommen:
+Die Semantik bezüglich Ownership für die Übergabe eines Wertes an eine Funktion ähnelt derjenigen, die einer Variablen einen Wert zuweist. Beim Übergeben von Variablen an eine Funktion wird genauso wie bei einer Zuweisung die Ownership übergeben (Move), wenn es sich um keinen einfachen Skalarwert handelt. Wie in C/C++ werden die Daten bei der Übergabe an Funktionen kopiert (in Rust: \autoref{fig:tabelle4}), wenn kein Pointer verwendet wird, also \glqq call by value\grqq{}. Pointer werden in Rust Referenzen genannt. Die Funktionsweise von Referenzen wird in \autoref{chap:ref} erklärt.
+
+Folgendes Programm zeigt, wie die Ownership von Variablen übergeben werden:
 
 \begin{lstlisting}
     fn main() {
-        let s = String::from("hello");  // s comes
-                                        // into scope
-        takes_ownership(s);         // s's value moved into
-                                    // the function...
-        // ... and is no longer valid here
+        let s = String::from("hello");
+        takes_ownership(s);
 
-        let x = 5;         // x comes into scope
+        let x = 5;
+        makes_copy_because_scalar(x);
 
-        makes_copy(x);     // x would move into the function
-                           // but i32 is Copy, so it's okay
-                           // to still use x afterward
-
-    } // Here, x goes out of scope, then s. But because s's
-      // value was moved, nothing special happens.
-
+        println!("{}", s); // compiler error
+        println!("{}", x); // this works!
+    }
 
     fn takes_ownership(some_string: String) {
-        // some_string comes into scope
-
         println!("{}", some_string);
-    } // Here, some_string goes out of scope and 'drop' is
-      // called. The backing memory is freed.
-
-
-    fn makes_copy(some_integer: i32) {
-        // some_integer comes into scope
-
+    }
+    fn makes_copy_because_scalar(some_integer: i32) {
         println!("{}", some_integer);
-    } // Here, some_integer goes out of scope. Nothing
-      // special happens.
+    }
 \end{lstlisting}
 
 Wenn \verb"s" nach der Methode \verb"takes_ownership" genutzt wird, würde Rust einen Fehler bei der Kompilierung ausgeben. Diese statischen Checks sollen Fehler im Programm verhindern.
@@ -598,15 +780,17 @@ Funktionen können Ownership durch einen Rückgabewert auch wieder zu\-rück\-ge
     }
 \end{lstlisting}
 
-\subsection{Referenzen und Borrowing}
+\subsection{Referenzen und Borrowing}\label{chap:ref}
 
-Eine Funktion, welche die Länge eines String berechnet und die Ownership des verwendeten Strings wieder zurückgibt, könnte so aussehen:
+Referenzen können verwendet werden, um einen Zeiger zu übergeben, sodass nicht der Ganze Datentyp kopiert werden muss. Also \glqq call by reference\grqq{}.
+
+Eine Funktion, welche die Länge eines Strings berechnet und die Ownership des verwendeten Strings wieder zurückgibt, könnte so aussehen:
 
 \begin{lstlisting}
     fn main() {
         let s1 = String::from("hello");
         let (s2, len) = calculate_length(s1);
-        println!("The length of '{}' is {}.", s2, len);
+        println!("The length of {} is {}.", s2, len);
     }
     fn calculate_length(s: String) -> (String, usize) {
         let length = s.len();
@@ -614,7 +798,7 @@ Eine Funktion, welche die Länge eines String berechnet und die Ownership des ve
     }
 \end{lstlisting}
 
-Dies ist jedoch viel Aufwand für ein Konzept, das gebräuchlich sein sollte. Daher können in Rust Referenzen verwendet werden.
+Dies ist jedoch viel Aufwand für ein Konzept, das gebräuchlich sein sollte. Daher können in Rust Referenzen auf Variablen übergeben werden.
 
 So wird die \verb"calculate_length" Funktion definiert und benutzt, die eine Referenz auf ein Objekt als Parameter enthält, anstatt die Ownership zu übernehmen:
 
@@ -622,7 +806,7 @@ So wird die \verb"calculate_length" Funktion definiert und benutzt, die eine Ref
     fn main() {
         let s1 = String::from("hello");
         let len = calculate_length(&s1);
-        println!("The length of '{}' is {}.", s1, len);
+        println!("The length of {} is {}.", s1, len);
     }
     fn calculate_length(s: &String) -> usize {
         s.len()
@@ -631,12 +815,12 @@ So wird die \verb"calculate_length" Funktion definiert und benutzt, die eine Ref
 
 Der gesamte Tupelcode in der Variablendeklaration und der Funk\-ti\-ons\-rück\-ga\-be\-wert ist weg. Außerdem wird \verb"&s1" in \verb"calculate_length" und in seiner Definition \verb"&String" anstelle von \verb"String" benutzt.
 
-Die \verb"&"-Zeichen erstellen Referenzen und ermöglichen auf einen bestimmten Wert zu verweisen, ohne dessen Ownership zu beanspruchen. \autoref{fig:tabelle5} zeigt ein Diagramm hierzu.
+Die \verb"&"-Zeichen erstellen Referenzen, die auf einen bestimmten Wert verweisen, ohne dessen Ownership zu beanspruchen. \autoref{fig:tabelle5} zeigt ein Diagramm.
 
 \begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.9]{Programmierung/Tabelle5.pdf}
-    \caption{Diagramm von \texttt{\&String} \texttt{s} Zeiger auf \texttt{String} \texttt{s1}}
+    \caption{Diagramm von Zeiger \texttt{\&String} \texttt{s} auf \texttt{String} \texttt{s1}}
     \label{fig:tabelle5}
 \end{figure}
 
@@ -646,7 +830,7 @@ Ebenso verwendet die Signatur der Funktion \verb"&" um anzuzeigen, dass der Typ 
 
 Das Gegenteil der Referenzierung mit \verb"&" ist die Dereferenzierung, die mit dem Dereferenzierungsoperator \verb"*" erzielt wird.
 
-Der Gültigkeitsbereich von \verb"s" ist der eines normalen Funktionsparameters, jedoch wird der Wert nicht aus dem Speicher gelöscht, da keine Ownership an \verb"s" übergeben wurde, weshalb auch keine zurückgegeben werden muss. Referenzen als Funktionsparameter werden in Rust \glqq Borrowing\grqq{} genannt. Wie in der realen Welt kann Eigentum an andere ausgeliehen werden und wenn die andere Person es nicht mehr braucht, kann diese es wieder an den Eigentümer zurückgeben.
+Die Lebensdauer von Referenzen, ist die, eines normalen Funktionsparameters, jedoch wird der Wert nicht aus dem Speicher gelöscht, da keine Ownership übergeben wurde. Referenzierung im Funktionsparameter wird in Rust \glqq borrowing\grqq{} genannt. Wie in der realen Welt kann Eigentum an andere ausgeliehen werden. Wenn die andere Person es nicht mehr braucht, kann diese es wieder an den Eigentümer zurückgeben.
 
 Genauso wie Variablen standardmäßig unveränderlich sind, gilt dies auch für Referenzen. Es kann nichts verändert werden, auf das nur mit \verb"&" referenziert wird. Folgender Code würde daher nicht funktionieren:
 
@@ -656,13 +840,13 @@ Genauso wie Variablen standardmäßig unveränderlich sind, gilt dies auch für 
         change(&s);
     }
     fn change(some_string: &String) {
-        some_string.push_str(", world"); // error
+        some_string.push_str(", world"); // compiler error
     }
 \end{lstlisting}
 
 \subsubsection{Veränderbare Referenzen}
 
-Kleine Veränderungen beheben den Fehler aus dem obigen Programm:
+Kleine Veränderungen beheben den Fehler aus dem letzten Codebeispiel:
 
 \begin{lstlisting}
     fn main() {
@@ -674,9 +858,9 @@ Kleine Veränderungen beheben den Fehler aus dem obigen Programm:
     }
 \end{lstlisting}
 
-Die Variable \verb"s" muss veränderbar gemacht werden durch Kennzeichnung mit \verb"mut". Es wird nun eine veränderbare Referenz übergeben und die Funktion erwartet nun auch eine entsprechende Referenz mit \verb"some_string: &mut String".
+Die Variable \verb"s" muss durch Kennzeichnung mit \verb"mut" veränderbar gemacht werden. Außerdem wird nun eine veränderbare Referenz übergeben (\verb"&mut"). Die Funktion erwartet nun eine entsprechende Referenz als Parameter in der Form: \verb"some_string:" \verb"&mut String".
 
-Veränderbare Referenzen haben eine große Einschränkung: Es darf nur eine veränderbare Referenz auf ein bestimmtes Datenelement in einem bestimmeten Bereich aktiv sein. Folgender Code würde somit nicht kompilieren:
+Es gibt jedoch eine große Einschränkung: Es darf nur eine veränderbare Referenz auf ein bestimmtes Datenelement in einem bestimmeten Bereich aktiv sein. Folgender Code würde somit nicht kompilieren:
 
 \begin{lstlisting}
     let mut s = String::from("hello");
@@ -689,7 +873,7 @@ Diese Einschränkung erlaubt kontrollierte Verwendung von Variablen. Mithilfe di
 
 \begin{itemize}
     \item Zwei oder mehr Pointer greifen zeitgleich auf den selben Speicherbereich zu.
-    \item Mindestens einer der Pointer schreiben.
+    \item Mindestens einer der Pointer schreibt.
     \item Kein Mechanismus wird verwendet, um den Zugriff der Daten zu synchronisieren.
 \end{itemize}
 
@@ -702,14 +886,13 @@ Es dürfen auch keine Kombinationen aus veränderbaren und unveränderbaren Refe
     let r1 = &s;     // ok
     let r2 = &s;     // ok
     let r3 = &mut s; // error
-    println!("{}, {}, and {}", r1, r2, r3);
 \end{lstlisting}
 
 Bei unveränderlichen Referenzen sollten man nicht damit rechnen müssen, dass sich der Wert dahinter verändern kann. Mehrere unveränderbare Referenzen sind in Ordnung, da mehrere lesende Zugriffe sich untereinander nicht beeinflussen.
 
 \subsubsection{\glqq Dangling References\grqq{}}
 
-In Programmiersprachen mit Pointer kann es vorkommen, dass diese auf einen Bereich im Speicher zeigen, der bereits freigegeben wurde. Das sind sogenannte \glqq dangling pointer\grqq{}. In Rust garantiert der Compiler, dass Referenzen immer auf einen gültigen Bereich zeigen. Folgender Code wird also beim Kompilieren eine Fehlermeldung ausgeben:
+In Programmiersprachen mit Pointern kann es vorkommen, dass diese auf einen Bereich im Speicher zeigen, der bereits freigegeben wurde. Das sind sogenannte \glqq dangling pointer\grqq{}. In Rust garantiert der Compiler, dass Referenzen immer auf einen gültigen Bereich zeigen. Folgender Code wird also beim Kompilieren eine Fehlermeldung ausgeben:
 
 \begin{lstlisting}
     fn main() {
@@ -721,7 +904,7 @@ In Programmiersprachen mit Pointer kann es vorkommen, dass diese auf einen Berei
     }
 \end{lstlisting}
 
-Der String \verb"s" wird nach der Funktion \verb"dangle" aus dem Speicher gelöscht. Die Referenz, die zurückgegeben wird, zeigt auf einen ungültigen Bereich im Speicher. Der Compiler erkennt, dass der Rückgabewert eine \glqq dangling reference\grqq{} ist und gibt eine Fehlermeldung aus. Damit der String im Speicher bleibt, sollte die Ownership von \verb"s" zurückgegeben werden:
+Der String \verb"s" wird nach der Funktion \verb"dangle" aus dem Speicher gelöscht. Die Referenz, die zurückgegeben wird, zeigt auf einen ungültigen Bereich im Speicher. Der Compiler erkennt, dass der Rückgabewert eine \glqq dangling reference\grqq{} ist und gibt eine Fehlermeldung aus. Damit der String im Speicher bleibt, muss die Ownership von \verb"s" zurückgegeben werden:
 
 \begin{lstlisting}
     fn no_dangle() -> String {
@@ -737,7 +920,7 @@ Der String \verb"s" wird nach der Funktion \verb"dangle" aus dem Speicher gelös
     \item Referenzen müssen immer auf einen gültigen Bereich zeigen.
 \end{itemize}
 
-\subsection{Slice Typ}
+\subsection{Slice Typ}\label{chap:slice}
 
 Ein weiterer Datentyp, welcher keine Ownership annimmt sind Slices. Sie werden benutzt um eine zusammenhängende Folge von Elementen einer Sammlung anstatt auf die gesamte Sammlung zu verweisen.
 
@@ -756,7 +939,7 @@ Die Syntax der Klammern beschreibt \verb"[starting_index..ending_index]". Intern
 \begin{figure}[htbp]
     \centering
     \includegraphics[scale=0.9]{Programmierung/Tabelle6.pdf}
-    \caption{Diagramm eines String Slice}
+    \caption{Diagramm von String Slices}
     \label{fig:tabelle6}
 \end{figure}
 
@@ -766,11 +949,11 @@ Dadurch entsteht eine Abhängigkeit, welche es Rust erlaubt, bereits beim Kompil
     let s = "Hello, world!";
 \end{lstlisting}
 
-Der Typ von \verb"s" ist \verb"&str": Es ist ein String Slice, auf einen bestimmten Bereich einer Zeichenkette verweist. Deshalb sind String-Literale unveränderlich. \verb"&str" ist eine unveränderliche Referenz.
+Der Typ von \verb"s" ist \verb"&str": Es ist ein String Slice, der auf einen bestimmten Bereich einer Zeichenkette verweist. Deshalb sind String Literale unveränderlich. \verb"&str" ist eine unveränderliche Referenz.
 
 \subsubsection{Andere Slices}
 
-String Slices sind speziell für Strings. Es gibt auch einen allgemeineren Slice-Typ für Arrays, bei dem wie bei String Slices auch hier Teile von Arrays referenziert werden können:
+String Slices sind speziell für Strings. Es gibt auch einen allgemeineren Slice Typ für Felder, bei dem wie bei String Slices auch hier Teile von Felder referenziert werden können:
 
 \begin{lstlisting}
     let a = [1, 2, 3, 4, 5];
@@ -779,10 +962,72 @@ String Slices sind speziell für Strings. Es gibt auch einen allgemeineren Slice
 
 Der Typ von \verb"slice" ist \verb"&[i32]". Auch hier wird ein Pointer auf das erste Element sowie die Länge des Slice gespeichert.
 
+Wie in \autoref{chap:array} erwähnt, können Slices dazu verwendet werden, Felder an Funktionen über einen \glqq call by reference\grqq{} zu übergeben:
+
+\begin{lstlisting}
+    fn main() {
+        let array = [1, 2, 3, 4, 5];
+        call_by_reference(&array);
+    }
+    
+    fn call_by_reference(slice: &[i32]) {
+        for element in slice.iter() {
+            println!("{}", element);
+        }
+    }
+\end{lstlisting}
+
+\subsection{Lifetime Operator}
+
+Folgende Funktion gibt eine Referenz eines Inputs zurück:
+
+\begin{lstlisting}
+    fn ref_test(a: &i32, b: &i32) -> &i32 {
+        a
+    }
+\end{lstlisting}
+
+Bei Aufruf dieser Funktion entsteht ein Problem:
+
+\begin{lstlisting}
+    fn main() {
+        let a = 549;
+
+        let e;
+        {
+            let tmp = a;
+            e = ref_test(&a, &tmp); // e is a reference of a
+        }
+        // tmp goes out of scope
+
+        // cant use e because tmp does not live long enough
+        println!("{}", e);
+    }
+\end{lstlisting}
+
+Der Compiler kann nicht feststellen, ob die Lebensdauer des Rückgabewerts von der Lebensdauer der übergebenen Referenzen abhängig ist. Darum müssen die Lebenszeiten mit dem Lifetime Operator im Funktionskopf angegeben werden.
+
+\begin{lstlisting}
+    // doesn't work yet
+    fn ref_test<'a>(a: &'a i32, b: &'a i32) -> &'a i32 {
+        a
+    }
+\end{lstlisting}
+
+Lifetimes werden in Rust mit einem Apostroph geschrieben. Obiger Code de\-fi\-niert eine Lebensdauer \verb"'a" in den spitzen Klammern. Den Parametern und dem Rückgabewert wird diese Lebensdauer zugeordnet. Der Compiler interpretiert daraus, dass beide Parameter die gleiche Lebensdauer haben könnten. Damit der Code aus der \verb"main" Funktion fehlerfrei kompiliert werden kann, muss der Parameter \verb"b" mit einer anderen Lebensdauer markiert werden:
+
+\begin{lstlisting}
+    // now it works
+    fn ref_test<'a, 'b>(a: &'a i32, b: &'b i32) -> &'a i32 {
+        a
+    }
+\end{lstlisting}
+
+Jetzt weiß der Compiler, dass die Lebendauer des Rückgabewerts abhängig vom ersten Parameter \verb"a" ist. Es kann also sichergestellt werden, dass der Wert hinter der Referenz \verb"e" nach dem Block weiterlebt.
 
 \section{Modulsystem}
 
-Dieses System von Rust ermöglicht die Erstellung von Modulen, welche mit Pfaden angesprochen werden können. Hiermit System können auch externe Pakete verwendet werden.
+Dieses System von Rust ermöglicht die Erstellung von Modulen, welche mit Pfaden angesprochen werden können. Hiermit können auch externe Pakete verwendet werden:
 
 Module lassen den Code in Gruppen einteilen:
 
@@ -799,7 +1044,7 @@ Module lassen den Code in Gruppen einteilen:
 
 Das Beispiel definiert das Modul \verb"sound" mit zwei inneren Modulen \verb"instrument" und \verb"voice" und ein Modul \verb"string" in \verb"instrument" mit der Funktion \verb"guitar". Der gesamte Modulbaum ist unter dem impliziten Modul namens \verb"crate" verwurzelt.
 
-Diese Art von Baum erinnert an das Dateisystem eines Betriebssystems. Genau wie Verzeichnisse in einem Dateisystem kann im Code durch Module Code or\-ga\-ni\-siert werden. Eine weitere Ähnlichkeit zu Dateisystemen besteht darin, dass zum Verweisen auf ein Element dessen Pfad verwendet wird.
+Diese Art von Baum erinnert an das Dateisystem eines Betriebssystems. Genau wie Verzeichnisse in einem Dateisystem, kann im Code durch Module Code or\-ga\-ni\-siert werden. Eine weitere Ähnlichkeit zu Dateisystemen besteht darin, dass zum Verweisen auf ein Element dessen Pfad verwendet wird.
 
 Es gibt zwei Arten von Pfaden:
 
@@ -822,9 +1067,11 @@ Das Trennzeichen besteht aus zwei Doppelpunkten (\verb"::"). Folgende \verb"main
 
 Dieser Code würde jedoch nicht kompilieren, da alle Elemente (Funktionen, Methoden, Strukturen, Enums und Konstanten) standardmäßig privat sind. Um ein Element öffentlich zu machen, kann das Schlüsselwort \verb"pub" verwendet werden.
 
-Elemente ohne dem Schlüsselwort \verb"pub" sind privat, wenn der Modulbaum des aktuellen Moduls \glqq nach unten\grqq{} betrachtet wird. Elemente ohne \verb"pub" sind jedoch öffentlich, wenn sich diese auf der selben Ebene befinden oder der Baum \glqq nach oben\grqq{} betrachtet wird. In einem Dateisystem verhält es sich ähnlich: Ohne Berechtigung auf einen Ordner kann dieser nicht betrachtet werden. Auf einen zugänglichen Ordner können dessen Vorgängerverzeichnisse auch eingesehen werden.
+Elemente ohne das Schlüsselwort \verb"pub" sind privat, wenn der Modulbaum des aktuellen Moduls \glqq nach unten\grqq{} betrachtet wird. Elemente ohne \verb"pub" sind jedoch öffentlich, wenn sich diese auf derselben Ebene befinden, oder der Baum \glqq nach oben\grqq{} betrachtet wird. In einem Dateisystem verhält es sich ähnlich: Ohne Berechtigung auf einen Ordner kann dieser nicht betrachtet werden. Auf einen zugänglichen Ordner können dessen Vorgängerverzeichnisse auch eingesehen werden.
 
 Um die Funktion \verb"guitar" in der \verb"main"-Methode aufrufen zu können, müssen ei\-ni\-ge Module sowie die Funktion öffentlich gemacht werden:
+
+\newpage
 
 \begin{lstlisting}
     mod sound {
@@ -862,12 +1109,14 @@ Häufig genutzte Pfade können mit dem Schlüsselwort \verb"use" gekürzt werden
     }
 \end{lstlisting}
 
-Externe Pakete können mit \verb"use"  eingebunden werden, dafür muss zunächst das Paket via Cargo.toml hinzugefügt werden:
+Externe Pakete können mit \verb"use"  eingebunden werden. Dafür muss zunächst das Paket via Cargo.toml hinzugefügt werden:
 
 \begin{lstlisting}
     [dependencies]
     rand = "0.6.5"
 \end{lstlisting}
+
+\newpage
 
 \noindent Im Code würde das so aussehen:
 
@@ -879,7 +1128,7 @@ Externe Pakete können mit \verb"use"  eingebunden werden, dafür muss zunächst
     }
 \end{lstlisting}
 
-Der Quellcode kann mit dem Schlüsselwort \verb"mod" auf mehrere Dateien aufgeteilt werden, dabei ist der Name der Datei der Name des Moduls. Ordnerstrukturen können auch erstellt werden, dabei ist der Ordner selbst auch ein Modul, dessen Definition in der Datei \verb"mod.rs" definiert werden kann.
+Der Quellcode kann mit dem Schlüsselwort \verb"mod" auf mehrere Dateien aufgeteilt werden. Dabei ist der Name der Datei der Name des Moduls. Ordnerstrukturen können auch erstellt werden. Dabei ist der Ordner selbst auch ein Modul, dessen Definition in der Datei \verb"mod.rs" definiert werden kann.
 
 \vspace{0.5cm}
 
@@ -906,7 +1155,7 @@ Der Quellcode kann mit dem Schlüsselwort \verb"mod" auf mehrere Dateien aufgete
 \end{lstlisting}
 
 
-\section{Objektorientierung}
+\section{Objektorientierung}\label{chap:oop}
 
 In der Programmiergemeinschaft herrscht kein Konsens darüber, welche Merkmale eine Sprache besitzen muss, um objektorientiert zu sein. Rust wird von vielen Programmierparadigmen beeinflusst, darunter auch von objektorientierter Programmierung (OOP). Objektorientierte Sprachen teilen üblicherweise drei Gemeinsamkeiten: Objekte, Kapselung und Vererbung.
 
@@ -916,11 +1165,9 @@ Das Buch \textit{Design Patterns: Elements of Reusable Object-Oriented Software}
     Object-oriented programs are made up of objects. An object packages both data and the procedures that operate on that data. The procedures are typically called methods or operations.
 \end{quote}
 
-Nach dieser Definition ist Rust objektorientiert. Strukturen und Enums enthalten Daten und \verb"impl" Blöcke stellen Methoden für diese bereit.
+Nach dieser Definition ist Rust objektorientiert. Strukturen und Enums enthalten Daten, \verb"impl" Blöcke stellen Methoden für diese bereit.
 
-Eine Struktur in Rust in vergleichbar mit \verb"struct" in C oder C++. Rust kann diese Strukturen jedoch mit Methoden erweitern, sodass diese wie Klassen verwendet werden können.
-
-Beispiel:
+Eine Struktur in Rust ist vergleichbar mit \verb"struct" in C. Rust kann diese Strukturen jedoch mit Methoden erweitern, sodass diese wie Klassen verwendet werden können. So wird eine Struktur mit drei Deklarationen \verb"id", \verb"age" und \verb"wage" definiert:
 
 \begin{lstlisting}
     struct Employee {
@@ -930,18 +1177,86 @@ Beispiel:
     }
     
     impl Employee {
+        fn new(id: i32, age: i32, wage: f64) -> Self {
+            Employee { id, age, wage }
+        }
         fn birthday(&mut self) {
             self.age += 1;
         }
     }
     
     fn main() {
-        let mut joe = Employee {
-            id: 1,
-            age: 32,
-            wage: 48000.0,
-        };
+        let mut joe = Employee::new(1, 32, 48000.0);
         joe.birthday();
+    }
+\end{lstlisting}
+
+Die Methode \verb"new" ist der Konstruktor, dessen Rückgabetyp \verb"Self" ist. \verb"Self" ist der Typ von \verb"impl". Er könnte auch mit \verb"-> Employee" definiert sein. Alternativ kann eine Instanz auch ohne Konstruktor erstellt werden:
+
+\begin{lstlisting}
+    let mut joe = Employee {
+        id: 1,
+        age: 32,
+        wage: 48000.0,
+    };
+\end{lstlisting}
+
+Wenn in Methoden auf das eigene Objekt zugegriffen werden soll, muss dieses als ersten Funktionsparameter übergeben werden. Diese Übergabe geschieht automatisch: beim Aufruf \verb"joe.birthday();" muss innerhalb der Klammern nichts geschrieben werden.
+
+\subsection{Stack oder Heap?}
+
+In C++ werden Objekte auf dem Stack gespeichert, wenn kein \verb"new" Operator verwendet wird. In Rust werden Objekte zunächst auch auf dem Stack gespeichert.
+
+C++ Code:
+
+\begin{lstlisting}
+    Employee e(1, 32, 48000.0);
+\end{lstlisting}
+
+Rust Code:
+
+\begin{lstlisting}
+    let e = Employee::new(1, 32, 48000.0);
+\end{lstlisting}
+
+Soll in C++ ein Objekt auf dem Heap alloziert werden, wird der \verb"new" Operator verwendet. In Rust muss ein sogenannter Smart Pointer erstellt werden. Die Funktionsweise von Smart Pointer wird in \autoref{chap:smpointer} erläutert. Zunächst ist wichtig zu verstehen, dass in Rust jeder Datentyp auf dem Heap gespeichert werden kann.
+
+C++ Code:
+
+\begin{lstlisting}
+    Employee *e = new Employee(1, 32, 48000.0);
+    delete e;
+\end{lstlisting}
+
+Rust Code:
+
+\begin{lstlisting}
+    let e = Box::new(Employee::new(1, 32, 48000.0));
+\end{lstlisting}
+
+\subsection{Smart Pointer}\label{chap:smpointer}
+
+Smart Pointer in Rust verhalten sich ähnlich wie Referenzen, mit dem Unterschied, dass sie mit einem Konstruktoraufruf instanziiert werden können. Sie sind also Strukturen bzw Klassen, die einen Pointer auf einen beliebigen Typ beinhalten. Genau wie Referenzen können sie mit dem \verb"*" Operator dereferenziert werden. Es gibt verschiedene Smart Pointer, häufig genutzt werden folgende drei Arten:
+
+\begin{itemize}
+    \item \verb"Box<T>" wird verwendet, um Werte dem Stack zuzuweisen.
+    \item \verb"Rc<T>" erlaubt das Teilen von Ownership, realisert wird das durch Zählen von Referenzen.
+    \item \verb"Arc<T>" erlaubt das Teilen von Ownership für mehrere Threads, wenn ein Synchronisierungsmechanismus benutzt wird.
+\end{itemize}
+
+\subsubsection{Verwendung von \texttt{Box<T>}}
+
+Der \verb"Box<T>" Typ kann auch dazu verwendet werden, Ownership von großen Datentypen zu übertragen. So kann das Kopieren von vielen Daten ausgeschlossen werden.
+
+\begin{lstlisting}
+    fn main() {
+        let large = Box::new(LargeStruct::new());
+        take_boxed_ownership(large);
+        // large is now invalid
+    }
+    
+    fn take_boxed_ownership(x: Box<LargeStruct>) {
+        // do stuff
     }
 \end{lstlisting}
 
@@ -949,7 +1264,7 @@ Beispiel:
 
 Ein weiterer Aspekt, welcher häufig mit OOP in Verbindung steht, ist die Idee der Kapselung. Das bedeutet, dass die Implementierung eines Objekts nicht für den Code verfügbar ist, der dieses Objekt verwendet.
 
-Mit Modulen kann in Rust gekapselt werden, aber auch Strukturen und Enums sowie dessen Werte sind standardmäßig privat und können mit dem Schlüsselwort \verb"pub" öffentlich gemacht werden.
+Mit Modulen kann in Rust gekapselt werden. Aber auch Strukturen und Enums, sowie dessen Werte, sind standardmäßig privat und können mit dem Schlüsselwort \verb"pub" öffentlich gemacht werden.
 
 \begin{lstlisting}
     pub mod people {
@@ -986,11 +1301,11 @@ Ein Beispiel der Vererbung in C++:
     };
 \end{lstlisting}
 
-Hier besitzt der Manager die gleichen Felder wie ein normaler Mitarbeiter zu\-sätz\-lich zu den eigenen Feldern.
+Hier besitzt der Manager die gleichen Felder wie ein normaler Mitarbeiter, zu\-sätz\-lich zu den eigenen Feldern.
 
 \subsubsection{Warum verzichtet Rust auf Vererbung?}
 
-In letzter Zeit ist die Vererbung als Entwurfslösung in vielen Programmiersprachen in Ungnade gefallen, da häufig die Gefahr besteht, dass mehr Code als erforderlich gemeinsam genutzt wird. Unterklassen sollten nicht immer alle Merkmale ihrer übergeordneten Klasse gemeinsam haben, dies geschieht jedoch mit Vererbung. Das kann das Design eines Programms weniger flexibel machen. Außerdem wird die Möglichkeit eingeführt, Methoden für Unterklassen aufzurufen, die keinen Sinn ergeben oder Fehler verursachen, da die Methoden nicht für die Unterklasse gelten. Darüber hinaus können in einigen Sprachen nur Unterklassen von einer Klasse erben, wodurch die Flexibilität der Sprache weiter einschränkt wird.
+In letzter Zeit ist die Vererbung als Entwurfslösung in vielen Programmiersprachen in Ungnade gefallen, da häufig die Gefahr besteht, dass mehr Code als erforderlich gemeinsam genutzt wird. Unterklassen sollten nicht immer alle Merkmale ihrer übergeordneten Klasse gemeinsam haben, dies geschieht jedoch mit Vererbung. Das kann das Design eines Programms weniger flexibel machen. Außerdem wird die Möglichkeit eingeführt, Methoden für Unterklassen aufzurufen, die keinen Sinn ergeben, oder Fehler verursachen, da die Methoden nicht für die Unterklasse gelten. Darüber hinaus können in einigen Sprachen nur Unterklassen von einer Klasse erben, wodurch die Flexibilität der Sprache weiter einschränkt wird.
 
 \subsection{Traits}
 
@@ -1015,7 +1330,7 @@ Dieses Trait definiert ein Tier, welches Geräusche von sich geben kann.
     }
 \end{lstlisting}
 
-Die Struktur \verb"Sheep" implementiert den Trait, sodass ein Schaf als Tier gesehen wird. Es können nun Funktionen geschrieben werden, die eine beliebige Tiere erwarten:
+Die Struktur \verb"Sheep" implementiert den Trait, sodass ein Schaf als Tier gesehen wird. Es kann nun eine Funktionen geschrieben werden, die ein beliebiges Tier erwartet:
 
 \begin{lstlisting}
     pub fn make_animal_speak(animal: &dyn Animal) {
@@ -1023,21 +1338,21 @@ Die Struktur \verb"Sheep" implementiert den Trait, sodass ein Schaf als Tier ges
     }
 \end{lstlisting}
 
-Es können auch Listen von Trait-Objekten erstellt werden:
+Es können auch Vektoren mit Trait-Objekten erstellt werden:
 
 \begin{lstlisting}
     let mut animals: Vec<Box<dyn Animal>> = Vec::new();
     animals.push(Box::new(Sheep {}));
 \end{lstlisting}
 
-Das Schlüsselwort \verb"dyn" ist optional, dient aber zur besseren Unterscheidung zwi\-schen einem Trait (dyn) und einer Struktur (impl) und sollte daher immer verwendet werden.
+Das Schlüsselwort \verb"dyn" ist optional, dient aber zur besseren Unterscheidung zwi\-schen einem Trait (dyn) und einer Struktur und sollte daher bei Traitobjekten immer verwendet werden. Da \verb"Animal" nur ein Trait ist und keine Struktur, wird das Schlüsselwort benutzt.
 
+% TODO Box
 Der Typ \verb"Box" ist ein Pointer mit einer festen Speichergröße, mit dem Werte auf dem Heap gespeichert werden können. Er wird benötigt, da zur Kompilierzeit die Größe des Datentyps noch nicht bekannt ist.
 
 \subsubsection{Trait-Objekte benutzen dynamische Bindung (dynamic dispatch)}\label{dynamicdispatch}
 
-Wenn Trait-Objekte für Funktionen verwendet werden, muss Rust die dynamische Bindung benutzen. Der Compiler kennt nicht alle Typen, die möglicherweise für den Code verwendet werden, sodass er nicht weiß, welche Methode für welchen Typ der Aufruf implementiert ist. Stattdessen verwendet Rust zur Laufzeit Zeiger im Trait-Objekt, um zu ermitteln, welche Methode aufgerufen werden soll. Wenn diese Suche ausgeführt wird, fallen Laufzeitkosten an, die beim statischen Binden (static dispatch) nicht auftreten würden. Die dynamische Bindung verhindert auch, dass der Compiler den Code einer Methode direkt an die entsprechende Stelle kopiert, wodurch Optimierungen verhindert werden können. Jedoch erhält man durch Traits zusätzliche Flexibilität im Code, es ist also ein Kompromiss.
-
+Wenn Trait-Objekte für Funktionen verwendet werden, muss Rust die dynamische Bindung benutzen. Der Compiler kennt nicht alle Typen, die möglicherweise für den Code verwendet werden. Er weiß also nicht, welche Methode für welchen Typ der Aufruf implementiert ist. Daher verwendet Rust zur Laufzeit Zeiger im Trait-Objekt, um zu ermitteln, welche Methode aufgerufen werden soll. Wenn diese Suche ausgeführt wird, fallen Laufzeitkosten an, die beim statischen Binden (sta\-tic dispatch) nicht auftreten würden. Die dynamische Bindung verhindert auch, dass der Compiler den Code einer Methode direkt an die entsprechende Stelle kopiert, wodurch Optimierungen verhindert werden können. Jedoch erhält man durch Traits zusätzliche Flexibilität im Code. Es ist also ein Kompromiss.
 
 \section{Generische Programmierung}
 
@@ -1064,7 +1379,7 @@ Beispiel in Rust:
     }
 \end{lstlisting}
 
-Die Klasse \verb"Point" beinhaltet zwei Werte deren Typen erst bei der Erstellung des Objekts bekannt werden. Beide Variablen \verb"x" und \verb"y" haben den gleichen Typ \verb"T". Die Variable \verb"p1" ist ein \verb"Point<i32>" und \verb"p2" ein \verb"Point<f64>".
+Die Klasse \verb"Point" beinhaltet zwei Werte, deren Typen erst bei der Erstellung des Objekts bekannt werden. Beide Variablen \verb"x" und \verb"y" haben den gleichen Typ \verb"T". Die Variable \verb"p1" ist ein \verb"Point<i32>" und \verb"p2" ein \verb"Point<f64>".
 
 Es können auch Typen verwendet werden, die bestimmte Traits implementieren müssen:
 
@@ -1078,12 +1393,11 @@ C++ und Rust implementieren Generics so, dass Code mit generischen Typen nicht l
 
 
 \section{Unit-Tests}\label{chap:unittests}
-
-Rust wurde mit einem hohen Maß an Sorge um die Richtigkeit von Programmen entworfen. Richtigkeit ist jedoch nicht leicht nachzuweisen. Das Typensystem von Rust kann nicht jede Art von Fehler verhindern, daher bietet Rust Unterstützung für das Schreiben automatisierten Softwaretests.
+Bei der Entwicklung von Rust wurde auf ein möglichst hohes Maß an Fehlerfreiheit in Programmen geachtet. Fehlerfreiheit ist jedoch nur schwer nachzuweisen. Das Typensystem von Rust kann nicht jede Art von Fehler verhindern, daher bietet Rust Unterstützung für das Schreiben automatisierter Softwaretests.
 
 In C oder C++ gibt es Frameworks, welche von Dritten angeboten werden. Ein Beispiel ist Google Test\footnote{https://github.com/google/googletest}.
 
-Für Unit-Tests in Rust wird nach Konvention in jeder Datei ein Modul mit dem Namen \verb"tests" erstellt mit der Annotation \verb"#[cfg(test)]". Hier werden Testfunktionen definiert mit der Annotation \verb"#[test]". Diese Unit-Tests werden mit dem Befehl \verb"cargo test" gestartet.
+Für Unit-Tests in Rust wird nach Konvention in jeder Datei ein Modul mit dem Namen \verb"tests" erstellt mit der Annotation \verb"#[cfg(test)]". Hier werden Testfunktionen definiert mit der Annotation \verb"#[test]". Der Test \verb"it_works" wird mit dem Befehl \verb"cargo test" gestartet.
 
 \begin{lstlisting}
     #[cfg(test)]
@@ -1099,7 +1413,7 @@ Für Unit-Tests in Rust wird nach Konvention in jeder Datei ein Modul mit dem Na
 Folgende Makros sind hilfreich bei der Erstellung von Tests:
 
 \begin{itemize}
-    \item \verb"assert!(a)": Prüft einen Boolean-Wert; Panik bei \verb"false".
+    \item \verb"assert!(a)": Prüft einen booleschen Ausdruck; Panik bei \verb"false".
     \item \verb"assert_eq!(a,b)": Vergleicht zwei Werte; Panik bei unterschiedlichen Werten.
     \item \verb"assert_ne!(a,b)": Wie \verb"assert_eq!"; Panik bei gleichen Werten.
     \item \verb"panic!()": Generiert Panik und der Test schlägt fehl.
@@ -1116,9 +1430,9 @@ Diese Makros können zusätzlich einen Text für mehr Informationen ausgeben:
 
 \subsection{Fehler mit \texttt{panic!}}
 
-Wenn im Code ein Fehler auftritt, kann das Makro \verb"panic!" benutzt werden. Im letzten Kapitel wurde wurde es bereits erläutert, um Tests fehlschlagen zu lassen. Beim Aufruf dieses Makros gibt das Programm eine Fehlermeldung aus, räumt den Stack auf und beendet sich.
+Wenn im Code ein Fehler auftritt, kann das Makro \verb"panic!" benutzt werden. In \autoref{chap:unittests} wurde es bereits benutzt, um Tests fehlschlagen zu lassen. Beim Aufruf dieses Makros gibt das Programm eine Fehlermeldung aus, räumt Stack und Heap auf und beendet sich. Paniken werden immer zur Laufzeit ausgelöst.
 
-Wenn also eine Panik auftritt, wird das Programm standardmäßig beendet. Das bedeutet, dass Rust den Stack zurücksetzt und die Daten aller Funktionen bereinigt, auf die er stößt. Aber das Zurückgehen des Stacks und Aufräumen ist eine Menge Arbeit. Die Alternative ist, sofort abzubrechen, wodurch das Programm ohne Be\-rei\-ni\-gung beendet wird und der vom Programm verwendete Speicher vom Be\-triebs\-sys\-tem bereinigt werden muss. Wenn in einem Projekt die resultierende Binärdatei so klein wie möglich gestaltet werden soll, kann bei einer Panik vom \glqq Abwickeln\grqq{} auf \glqq Abbrechen\grqq{} gewechselt werden, indem in der Cargo.toml \verb"panic = 'abort'" in die entsprechenden Abschnitte geschrieben wird:
+Wenn also eine Panik auftritt, wird das Programm standardmäßig beendet. Das bedeutet, dass das Programm selbst noch den Speicher der Objekte wieder freigibt. Das Zurückgehen des Stacks und das Aufräumen, ist jedoch eine Menge Arbeit. Die Alternative ist, sofort abzubrechen, wodurch das Programm ohne Be\-rei\-ni\-gung beendet wird und der vom Programm verwendete Speicher vom Be\-triebs\-sys\-tem bereinigt werden muss. Wenn in einem Projekt die resultierende Binärdatei so klein wie möglich gestaltet werden soll, kann bei einer Panik vom \glqq Abwickeln\grqq{} auf \glqq Abbrechen\grqq{} gewechselt werden, indem in der Cargo.toml \verb"panic = 'abort'" in die entsprechenden Abschnitte geschrieben wird:
 
 \begin{lstlisting}
     [profile.release]
@@ -1134,14 +1448,14 @@ Eine Panik kann beispielsweise auch ausgelöst werden, wenn im Code auf ein Elem
     }
 \end{lstlisting}
 
-In diesem Codebeispiel wird auf das 100. Element des Listenelements \verb"v" zugegriffen. Dadurch entsteht folgende Fehlermeldung:
+In diesem Codebeispiel wird mithilfe eines Makros ein Vektor mit drei Zahlen erstellt. Es wird dann auf das 99. Element zugegriffen. Dadurch entsteht folgende Fehlermeldung zur Laufzeit:
 
 \begin{lstlisting}
     thread 'main' panicked at 'index out of bounds: the len
     is 3 but the index is 99'
 \end{lstlisting}
 
-In C und C++ würden bei Arrays keine Fehlermeldungen erscheinen und es würde ein Zahlenwert ausgegeben werden, der davon abhängig ist, was in diesem Moment im Speicher steht. In C++ können jedoch alternativ Listen erstellt werden (z. B. \verb"vector<int>"), die zur Laufzeit überprüfen können, ob die Zugriffe innerhalb des Bereichs der Liste stattfinden.
+In C und C++ würden bei Felder keine Fehlermeldungen erscheinen und es würde ein Zahlenwert ausgegeben werden, der davon abhängig ist, was in diesem Moment im Speicher steht. In C++ können alternativ Listen erstellt werden (z. B. \verb"vector<int>"), die zur Laufzeit überprüfen können, ob die Zugriffe innerhalb des Bereichs der Liste stattfinden.
 
 \subsection{Fehler mit \texttt{Result}}
 
@@ -1156,7 +1470,7 @@ Das Enum \verb"Result" ist in der Standardbibliothek definiert:
     }
 \end{lstlisting}
 
-Bei \verb"T" und \verb"E" handelt es sich um generische Typparameter. Dabei stellt \verb"T" den Typ des Werts dar, der in einem Erfolgsfall innerhalb der \verb"Ok" Variante zurückgegeben wird und \verb"E" stellt die Art des Fehlers dar, der in einem Fehlerfall innerhalb der \verb"Err" Variante zurückgegeben wird.
+Bei \verb"T" und \verb"E" handelt es sich um generische Typparameter. Dabei stellt \verb"T" den Typ des Werts dar, der in einem Erfolgsfall innerhalb der \verb"Ok" Variante zurückgegeben wird und \verb"E" die Art des Fehlers, der in einem Fehlerfall innerhalb der \verb"Err" Variante zurückgegeben wird.
 
 So wird eine Funktion aufgerufen, die ein \verb"Result" zurückgibt, weil sie fehlschlagen könnte.
 
@@ -1167,7 +1481,7 @@ So wird eine Funktion aufgerufen, die ein \verb"Result" zurückgibt, weil sie fe
     }
 \end{lstlisting}
 
-In der Standardbibliothek steht beschrieben, welchen Typ die Funktion zu\-rück\-gibt, \verb"f" ist vom Typ \verb"Result<File, Error>". Mithilfe des \verb"match"-Statements kann getestet werden, ob die Funktion korrekt ausgeführt wurde oder, bei Misserfolg, welche Art von Fehler entstanden ist.
+In der Standardbibliothek steht beschrieben, welchen Typ die Funktion zu\-rück\-gibt. \verb"f" ist vom Typ \verb"Result<File, Error>". Mithilfe des \verb"match"-Statements kann getestet werden, ob die Funktion korrekt ausgeführt wurde, oder, bei Misserfolg, welche Art von Fehler entstanden ist.
 
 \begin{lstlisting}
     use std::fs::File;
@@ -1176,11 +1490,11 @@ In der Standardbibliothek steht beschrieben, welchen Typ die Funktion zu\-rück\
     let f = match f {
         Ok(file) => file,
         Err(error) => match error.kind() {
-            ErrorKind::NotFound => /*TODO: create file*/
-                                   panic!(),
-            other_error => panic!("could not open: {:?}",
-                           other_error),
-        }
+            ErrorKind::NotFound => {
+                panic!() /* do stuff */
+            },
+            _ => panic!("could not open file"),
+        },
     };
 \end{lstlisting}
 
@@ -1188,9 +1502,13 @@ Der Aufruf \verb"error.kind()" gibt ein Enum \verb"ErrorKind" zurück, womit auf
 
 \subsubsection{Fehler weitergeben}
 
-Beim Schreiben einer Funktion, welche möglicherweise einen Fehler aufruft, kann der Fehler an den aufrufenden Code zurückgegeben werden, anstatt den Fehler in dieser Funktion zu behandeln. Somit wird dem aufrufendem Code mehr Kontrolle gegeben. Anstelle des Aufrufs von \verb"panic!" wird ein \verb"return"-Statement verwendet. Alternativ kann der \verb"?"-Operator verwendet werden.
+Beim Schreiben einer Funktion, welche möglicherweise einen Fehler aufruft, kann dieser an den aufrufenden Code zurückgegeben werden, anstatt ihn in dieser Funktion zu behandeln. Somit wird dem aufrufendem Code mehr Kontrolle gegeben. Anstelle des Aufrufs von \verb"panic!", wird ein \verb"return"-Statement verwendet. Alternativ kann der \verb"?"-Operator verwendet werden.
 
 \subsection{\texttt{?}-Operator}
+
+Wird ein \verb"?" hinter ein \verb"Result" geschrieben und der Wert ist ein \verb"Ok", wird der Wert innerhalb des \verb"Ok" von diesem Ausdruck zurückgegeben und die Funktion wird fortgesetzt. Wenn es sich bei dem Wert um einen Fehler handelt, wird der Fehler von der gesamten Funktion zurückgegeben, als ob das Schlüsselwort \verb"return" verwendet worden wäre. Dieser Operator kann nur innerhalb von Funktionen verwendet werden, welche ein \verb"Result" als Rückgabetyp haben. Dadurch wird die Implementierung vereinfacht und die Lesbarkeit des Codes verbessert.
+
+\newpage
 
 Codebeispiel:
 
@@ -1207,22 +1525,22 @@ Codebeispiel:
     }
 \end{lstlisting}
 
-Wird ein \verb"?" hinter ein \verb"Result" geschrieben und der Wert ist ein \verb"Ok", wird der Wert innerhalb des \verb"Ok" von diesem Ausdruck zurückgegeben und die Funktion wird fortgesetzt. Wenn es sich bei dem Wert um einen Fehler handelt, wird der Fehler von der gesamten Funktion zurückgegeben, als ob das Schlüsselwort \verb"return" verwendet wurde. Dieser Operator kann nur innerhalb von Funktionen verwendet werden, welche ein \verb"Result" als Rückgabetyp haben. Dadurch wird die Implementierung vereinfacht und die Lesbarkeit des Codes verbessert.
+Die Methode \verb"File::open" gibt ein \verb"Result<File, io::Error>" zurück. In Ver\-bin\-dung mit dem \verb"?"-Operator wird bei erfolgreichem öffnen der Datei die Variable \verb"f" mit  dem Typ \verb"File" gesetzt. Ansonsten wird die Funktion beendet und gibt den \verb"io::Error" in einem \verb"Err" verpackt zurück. Also \verb"Err(io::Error)".
 
 \subsection{Error Handling in C und C++}
 
-In C gibt es keine direkte Unterstützung für die Fehlerbehandlung, es gibt aber Möglichkeiten, wie sie dennoch durchgeführt werden kann. Viele C-Funk\-ti\-ons\-auf\-ru\-fe geben im Fehlerfall \verb"-1" oder \verb"NULL" zurück, sodass mit einer \verb"if"-Anweisung entsprechend reagiert werden kann. Die globale Variable \verb"errno" kann zusätzlich zur Unterscheidung verwendet werden.
+In C gibt es keine direkte Unterstützung für die Fehlerbehandlung. Es gibt aber Möglichkeiten, wie sie dennoch durchgeführt werden kann. Viele C-Funk\-ti\-ons\-auf\-ru\-fe geben im Fehlerfall \verb"-1" oder \verb"NULL" zurück, sodass mit einer \verb"if"-Anweisung entsprechend reagiert werden kann. Die globale Variable \verb"errno" kann zusätzlich zur Unterscheidung verwendet werden.
 
 C++ bietet einige hilfreiche Features. Die \verb"throw"-Anweisung kann Ausnahmen an einen Handler übergeben, ähnlich wie es beispielsweise in Java üblich ist. Zusätzlich können statische Assertionen benutzt werden, um zur Kompilierzeit bestimmte Eigenschaften sicherzustellen.
 
 
 \section{Dokumentieren mit rustdoc}
 
-Ein wichtiger Bestandteil bei der Programmierung in Rust ist das Erstellen von Dokumentationen. Das Tool \verb"rustdoc" ist vergleichbar mit \verb"javadoc" für Java. Es können im Code spezielle Kommentare geschrieben werden und daraus wird eine Dokumentation mit HTML, CSS und JavaScript erstellt.
+Ein wichtiger Bestandteil bei der Programmierung in Rust ist das Erstellen von Dokumentationen. Das Tool \verb"rustdoc" ist vergleichbar mit \verb"javadoc" für Java. Es können im Code spezielle Kommentare geschrieben  und daraus eine Dokumentation mit HTML, CSS und JavaScript erstellt werden.
 
 \subsection{Grundlegende Verwendung}
 
-Folgendes Beispiel zeigt die grundsätzliche Verwendung der Kommentare, sie werden mit drei Schrägstrichen gekennzeichnet. Alternativ kann die Annotation \verb"#[doc]" verwendet werden.
+Folgendes Beispiel zeigt die grundsätzliche Verwendung der rustdoc Kommentare. Sie werden mit drei, statt zwei Schrägstrichen gekennzeichnet. Alternativ kann die Annotation \verb"#[doc]" verwendet werden.
 
 \begin{lstlisting}
     /// foo is a function
@@ -1258,33 +1576,35 @@ Rust erlaubt die Ausführung von Tests innerhalb der Codebeispiele in der Dokume
     /// ```
 \end{lstlisting}
 
-Bei einem Aufruf von \verb"cargo test" wird dieser Code ausgeführt, der Code muss also kompilierbar sein. Alle \verb"assert"-Funktionen können hier verwendet werden.
+Bei einem Aufruf von \verb"cargo test" wird dieser Code ausgeführt. Der Code muss also kompilierbar sein. Alle \verb"assert"-Funktionen können hier verwendet werden.
 
 Es gibt ein paar nützliche Annotationen, mit denen Dokumentationstests zu\-sätz\-lich angepasst werden können.
 
+\newpage
+
 \begin{itemize}
     \item \verb"ignore": Der Code wird von Rust ignoriert.
-\begin{lstlisting}
+          \begin{lstlisting}
     /// ```ignore
     /// fn foo() {
     /// ```
 \end{lstlisting}
-\item \verb"should_panic": Der Test sollte eine Panik auslösen.
-\begin{lstlisting}
+    \item \verb"should_panic": Der Test sollte eine Panik auslösen.
+          \begin{lstlisting}
     /// ```should_panic
     /// assert!(false);
     /// ```
 \end{lstlisting}
-\item \verb"no_run": Der Code wird kompiliert aber nicht ausgeführt.
-\begin{lstlisting}
+    \item \verb"no_run": Der Code wird kompiliert aber nicht ausgeführt.
+          \begin{lstlisting}
     /// ```no_run
     /// loop {
     ///     println!("Hello, world");
     /// }
     /// ```
 \end{lstlisting}
-\item \verb"compile_fail": Der Code soll beim Kompilieren einen Fehler ausgeben.
-\begin{lstlisting}
+    \item \verb"compile_fail": Der Code soll beim Kompilieren einen Fehler ausgeben.
+          \begin{lstlisting}
     /// ```compile_fail
     /// let x = 5;
     /// x += 2; // shouldn't compile!
@@ -1295,7 +1615,7 @@ Es gibt ein paar nützliche Annotationen, mit denen Dokumentationstests zu\-sät
 
 \section{WebAssembly}
 
-WebAssembly ist eine Technologie mit der performante Webanwendungen programmiert werden können. Es handelt sich dabei um einen Binärcode, der aus verschiedenen Programmiersprachen generiert werden kann, darunter C, C++ und Rust. Rust bietet Programmierern eine Low-Level-Kontrolle und zuverlässige Leistung. Es ist frei von Pausen durch Garbage-Collection aus JavaScript und Programmierer haben Kontrolle über Pointer, Monomorphisierungen und Speicherlayout.
+WebAssembly ist eine Technologie, mit der performante Webanwendungen programmiert werden können. Es handelt sich dabei um einen Binärcode, der aus verschiedenen Programmiersprachen generiert werden kann. Darunter C, C++ und Rust. Rust bietet Programmierern eine Low-Level-Kontrolle und zuverlässige Leistung. Es ist frei von Pausen durch garbage collection aus JavaScript und Programmierer haben Kontrolle über Pointer, Monomorphisierungen und Speicherlayout.
 
 Zum Erstellen von WebAssembly Projekten in Rust werden die Cargo-Pakete \verb"wasm-pack", \verb"cargo-generate" und der Paketmanager für JavaScript NPM benötigt. \cite{RustWebAssembly}
 
@@ -1312,7 +1632,7 @@ Dadurch entsteht ein Rustprojekt mit einer Cargo.toml sowie zwei Quellcodedateie
 
 Die Cargo.toml ist vorkonfiguriert für die Erstellung von \verb".wasm" Bibliotheken. Die Quelldateien definieren ein Beispielprogramm, welches die Funktion \verb"alert" aus JavaScript in Rust importiert und eine Funktion \verb"greet" von Rust exportiert.
 
-Um das Projekt zu bauen, müssen die Rust-Quelldateien in \verb".wasm" Binärdateien kompiliert und eine JavaScript API generiert werden um das generierte WebAssembly zu benutzen. Dies geschieht mit einem Befehl:
+Um das Projekt zu bauen, müssen die Rust-Quelldateien in \verb".wasm" Binärdateien kompiliert und eine JavaScript API generiert werden, um das generierte WebAssembly zu benutzen. Dies geschieht mit einem Befehl:
 
 \begin{lstlisting}
     $ wasm-pack build
@@ -1328,7 +1648,7 @@ Um den Code auf einer Webseite zu benutzen, kann mit Node.js die Projektvorlage 
     $ npm init wasm-app www
 \end{lstlisting}
 
-Nun müssen die Abhängigkeiten installiert werden, folgender Befehl muss im Unterordner \verb"./www" ausgeführt werden:
+Nun müssen die Abhängigkeiten installiert werden. Folgender Befehl muss im Unterordner \verb"./www" ausgeführt werden:
 
 \begin{lstlisting}
     $ npm install

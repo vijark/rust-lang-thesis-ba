@@ -7,11 +7,12 @@
 2. Rust toolchain
     - rustup
     - rustc
+        - Hauptphasen der Kompilierung
         - Grundlegende Verwendung
-        - Lints
+        - Lint
     - Cargo
         - Projektverwaltung
-        - Veröffentlichung bei crates.io
+        - Veröffentlichung auf crates.io
         - Externe Tools
     <br/><br/>
 3. Programmierung mit Rust und Unterschiede zu C/C++
@@ -21,10 +22,13 @@
     [functions](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/functions/src/main.rs),
     [control_flow](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/control_flow/src/main.rs)<br/>
     **C/C++** [number_types](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/number_types/main.c)
+        - Hello, world!
         - Variablen und Mu­ta­bi­li­tät
         - Datentypen
-        - Funktionen
         - Kontrollstrukturen
+        - Felder
+        - Funktionen
+        - Makros
     - ---
     - Ownership<br/>
     **Rust** [strings](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/strings/src/main.rs),
@@ -37,6 +41,7 @@
         - Funktionweise von Ownership
         - Referenzen und Borrowing
         - Slice Typ
+        - Lifetime Operator
     - ---
     - Modulsystem<br/>
     **Rust** [modules](https://github.com/vijark/rust-lang-thesis-ba/tree/master/code/Rust/modules/src)<br/>
@@ -47,6 +52,8 @@
     [employees](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/Rust/employees/src/main.rs)<br/>
     **C/C++** [rectangle](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/rectangle/main.cpp),
     [employees](https://github.com/vijark/rust-lang-thesis-ba/blob/master/code/C_C%2B%2B/employees/main.cpp)
+        - Stack oder Heap?
+        - Smart Pointer
         - Kapselung
         - Vererbung
         - Traits

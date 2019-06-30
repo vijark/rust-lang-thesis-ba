@@ -14,7 +14,7 @@ Das Rustup-Tool ist die empfohlene Installationsmethode für Rust. Das Tool erm�
     rustup default nightly              # switch to 'nightly'
 \end{lstlisting}
 
-Rust unterstützt auch das Kompilieren für andere Zielsysteme, dabei kann rustup helfen. So kann man beispielsweise MUSL verwenden:
+Rust unterstützt auch das Kompilieren für andere Systeme (Cross-Compiler). So wird beispielsweise MUSL als Zielsystem verwendet:
 
 \begin{lstlisting}
     # add target
@@ -40,6 +40,23 @@ Mit Hilfe von rustup können verschiedene Komponenten installiert werden:
 
 Der Compiler von Rust, er übersetzt den Quellcode in einen binären Code, entweder als Bibliothek oder als ausführbare Datei. Die meisten Rust-Programmierer rufen rustc nicht direkt auf, sondern indirekt über Cargo. \cite{RustcBook}
 
+\subsection{Hauptphasen der Kompilierung}
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[scale=1.05]{Toolchain/Compiler.pdf}
+    \caption{Zwischenschritte bei der Kompilierung}
+    \label{fig:zwischenscritte}
+\end{figure}
+
+Der Compiler von Rust übersetzt den Code mit mehreren Zwischenschritten, eine Darstellung hierzu ist in \autoref{fig:zwischenscritte} zu sehen. \cite{RustcDevelopment}
+
+Zuerst wird der Rust Code in eine \glqq high level intermediate representation\grqq{} (HIR) übersetzt. Die HIR Darstellung ist ein abstrakter Syntaxbaum, welcher in einer ähnlichen Syntax aufgebaut ist wie der Rust Code. Hier findet die Typprüfung statt, welche eine Tabelle mit den Typen der Ausdrücke erstellt. Anschließend finden weitere Analysen statt, beispielsweise die Überprüfung der Zugriffe auf private Klassen oder Module (Kapselung).
+
+Die nächste Stufe ist die \glqq middle IR\grqq{} (MIR). Diese Darstellung ist für Menschen schlecht lesbar, aber sie eignet sich für die Überprüfung der Ownership von Variablen. Codeoptimierungen werden hier auch vorgenommen. Die Bedeutung von Ownership in Rust wird in \autoref{chap:ownership} behandelt.
+
+Aus der MIR Darstellung wird eine \glqq low level virtual machine IR\grqq{} (LLVM IR) erzeugt. LLVM ist ein Compilerunterbau, welcher auch vom C Compiler clang verwendet wird. LLVM führt hier einige Optimierungen durch und erzeugt Ob\-jektdateien, welche dann gelinkt werden.
+
 \subsection{Grundlegende Verwendung}
 
 Der Kommandozeilenbefehl für das Kompilieren mit rustc ähnelt dem eines C-Programms:
@@ -49,18 +66,17 @@ Der Kommandozeilenbefehl für das Kompilieren mit rustc ähnelt dem eines C-Prog
     rustc hello.rs -o helloRust         # Rust
 \end{lstlisting}
 
-Anders als in C muss nur der crate root\footnote{Quellcode-Datei mit der main() Methode} angegeben werden. Der Compiler kann mithilfe des Codes selbständig festellen, welche Dateien er übersetzen und linken muss. Es müssen somit keine Objektdateien erstellt werden.
+Anders als in C muss nur der crate root\footnote{Quellcode-Datei mit der main() Methode} angegeben werden. Der Compiler kann mithilfe des Codes selbständig festellen, welche Dateien er übersetzen und linken muss. Bei einem einfachen Aufruf des Compilers ohne weitere Parameter erhält man ein ausführbares Programm wie es auch in C oder C++ der Fall ist. Üblicherweise werden bei einem Aufruf von \verb"rustc" keine Objektdateien hinterlassen. Wird der Projektmanager Cargo verwendet, dann werden die Objektdateien gespeichert. Somit werden nur die Teile des Projekts erneut kompiliert, die umgeschrieben wurden.
 
-\subsection{Lints}
+\subsection{Lint}
 
-Ein Lint ist ein Werkzeug, das zur Verbesserung des Quellcodes verwendet wird. Der Rust-Compiler enthält eine Reihe von Lints, dadurch werden beim Kompilieren Warnungen und Fehlermeldungen ausgeben. Beispiel:
+Ein Lint ist ein Werkzeug, das zur statischen Codeanalyse verwendet wird. Der Rust-Compiler verwendet ebenfalls einen Lint, wodurch beim Kompilieren Warnungen und Fehlermeldungen ausgeben werden. Im folgendem Beispiel wird eine unbenutzte Variable deklariert, der Aufbau des Codes wird in \autoref{chap:prog} erklärt.
 
 \begin{lstlisting}
     $ cat main.rs
     fn main() {
         let x = 5;
     }
-
     $ rustc main.rs
     warning: unused variable: `x`
      --> main.rs:2:9
@@ -71,7 +87,7 @@ Ein Lint ist ein Werkzeug, das zur Verbesserung des Quellcodes verwendet wird. D
       = note: #[warn(unused_variables)] on by default
 \end{lstlisting}
 
-Das ist das \verb"unused_variables" Lint und besagt, dass eine Variable deklariert wurde, die im Code keine Verwendung findet. Dies ist nicht falsch, es könnte jedoch ein Hinweis auf einen Bug sein.
+Das ist das \verb"unused_variables" Lint und verweist auf eine unbenutzte Variable, die im Code keine Verwendung findet. Dies ist nicht falsch, es könnte jedoch ein Hinweis auf einen Bug sein.
 
 
 \section{Cargo}
@@ -92,7 +108,6 @@ Projekte können mit Hilfe von Cargo erstellt werden, dabei entsteht eine bestim
     ├── Cargo.toml
     └── src
         └── main.rs
-    
     1 directory, 2 files
 \end{lstlisting}
 
@@ -110,15 +125,11 @@ Die Cargo.toml enthält alle wichtigen Metainformationen, die Cargo zum Kompilie
 
 Die Informationen über den Autor enthält Cargo von den Umgebungsvariablen \verb"CARGO_NAME" und \verb"CARGO_EMAIL". In Rust gibt es sogenannte editions, welche in der Regel in einem zeitlichen Abstand von zwei oder drei Jahren veröffentlicht werden und, ähnlich wie in C, einen Standard festlegen. Im Juli 2019 gab es zwei Editionen: 2015 und 2018. Das Pendant in C wären die C-Standards wie z. B. C90, C99 oder C11.
 
-Zudem können hier zusätzliche Bibliotheken angegeben werden, die Cargo automatisch von crates.io herunterlädt und in das Projekt einbindet. Cargo erstellt für genauere Informationen der Abhängigkeiten eine Datei Cargo.lock. Diese sollte nicht manuell verändert werden, da sie von Cargo selbständig gepflegt wird. Mithilfe von Cargo können auch Tests gestartet werden, genauere Information dazu sind aus \autoref{chap:unittests} zu entnehmen.
+Zudem können hier zusätzliche Bibliotheken angegeben werden, die Cargo automatisch von crates.io herunterlädt und in das Projekt einbindet. Cargo erstellt für genauere Informationen der Abhängigkeiten eine Datei: Cargo.lock. Diese sollte nicht manuell verändert werden, da sie von Cargo selbständig gepflegt wird. Mithilfe von Cargo können auch Tests gestartet werden, genauere Information dazu sind aus \autoref{chap:unittests} zu entnehmen.
 
-\subsubsection{Projekt-Layout}
+\subsubsection{Projektlayout}
 
-\begin{figure}[htbp]
-    \centering
-    \includegraphics{Toolchain/dateibaum.pdf}
-    \caption{Dateibaum eines Rust Projekts}
-\end{figure}
+Die \autoref{fig:dateibaum} zeigt alle wichtigen Dateien als Baum.
 
 \begin{itemize}
     \item Cargo.toml und Cargo.lock werden im Wurzelverzeichnis des Projekts gespeichert.
@@ -130,6 +141,13 @@ Zudem können hier zusätzliche Bibliotheken angegeben werden, die Cargo automat
     \item Beispiele befinden sich im \verb"examples" Ordner und
     \item Benchmarks im \verb"benches" Ordner.
 \end{itemize}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics{Toolchain/dateibaum.pdf}
+    \caption{Dateibaum eines Cargo Projekts}
+    \label{fig:dateibaum}
+\end{figure}
 
 \subsubsection{Wichtige Kommandozeilenbefehle für Cargo}
 
@@ -146,6 +164,8 @@ Zum Kompilieren und Ausführen:
     $ cargo run
 \end{lstlisting}
 
+\newpage
+
 \noindent Zum Testen:
 
 \begin{lstlisting}
@@ -156,7 +176,7 @@ Zum Kompilieren und Ausführen:
     $ cargo test -- --ignored
 \end{lstlisting}
 
-\subsection{Veröffentlichung bei crates.io}
+\subsection{Veröffentlichung auf crates.io}
 
 Das Paketeregister der Rust-Community, genannt crates.io, ist ein Ort für Bibliotheken, die von verschiedenen Programmierern aus der Community verwaltet werden. Eine Veröffentlichung ist permanent. Das heißt, dass keine Versionsnummern überschrieben werden können und somit der Code nicht gelöscht werden kann. Dafür gibt es keine Begrenzung für die Anzahl der Versionen, die veröffentlicht werden können.
 
@@ -188,8 +208,6 @@ Dabei ist zu beachten, dass es eine Beschränkung der Uploadgröße von 10 MB f�
 bzw.
 
 \begin{lstlisting}
-    [package]
-    # ...
     include = [
         "**/*.rs",
         "Cargo.toml",
@@ -221,7 +239,7 @@ Wenn ein schwerwiegender Bug in einem bereits hochgeladenen Paket gefunden wurde
 
 Diese Pakete können immer noch heruntergeladen und in andere Projekte eingebunden werden, die bereits an \glqq yanked\grqq{} Pakete gebunden waren. Cargo lässt dies jedoch nicht bei neu erstellten Crates\footnote{Bibliothek oder Paket in Rust} zu.
 
-Ein Projekt wird meist von mehreren Entwicklern programmiert oder die Besitzer des Projekts ändern sich im Laufe der Zeit. Folgende Befehle fügen neue Entwickler zu einem Projekt hinzu, welche dann in der Lage sind, auf crates.io zu veröffentlichen:
+Ein Projekt wird meist von mehreren Entwicklern programmiert, oder die Besitzer des Projekts ändern sich im Laufe der Zeit. Folgende Befehle fügen neue Entwickler zu einem Projekt hinzu, welche dann in der Lage sind, auf crates.io zu veröffentlichen:
 
 \begin{lstlisting}
     # "named" owner:
@@ -234,11 +252,11 @@ Ein Projekt wird meist von mehreren Entwicklern programmiert oder die Besitzer d
     $ cargo owner --remove github:rust-lang:owners
 \end{lstlisting}
 
-Wenn ein Teamname angegeben wird, sind diese nicht befugt, neue \glqq owner\grqq{} hinzuzufügen. Die Befehle yank und publish sind den Teammitgliedern jedoch erlaubt. Ist ein \glqq named owner\grqq{} in einem Team, so sind alle Entwickler dieses Teams als \glqq named owner\grqq{} eingestuft.
+Wenn ein Team angegeben wird, ist dieses nicht befugt, neue \glqq owner\grqq{} hinzuzufügen. Die Befehle yank und publish sind den Teammitgliedern jedoch erlaubt. Ist ein \glqq named owner\grqq{} in einem Team, so sind alle Entwickler dieses Teams als \glqq named owner\grqq{} eingestuft.
 
 \subsection{Externe Tools}
 
-Cargo versucht, die Integration von Tools von Drittanbietern zu vereinfachen, z. B. für IDEs oder anderen Build-Systemen. Dazu verfügt Cargo über mehrere Möglichkeiten:
+Cargo versucht, die Integration von Tools von Drittanbietern zu vereinfachen, z. B. für IDEs oder anderen Build-Systemen. Hierfür gibt es mehrere Möglichkeiten:
 
 \begin{itemize}
     \item cargo metadata-Befehl
@@ -288,7 +306,7 @@ Dadurch entsteht ein Output im JSON-Format mit Informationen über Compiler-Fehl
 
 \subsubsection{Benutzerdefinierte Befehle}
 
-Cargo ist so ausgelegt, dass es erweitert werden kann, ohne dass Cargo selbst modifiziert werden muss. Dazu muss ein Programm in der Form cargo-\textit{command} in einem der \verb"$PATH"-Verzeichnisse des Benutzers liegen. Anschließend kann es von Cargo aufgerufen werden mit \glqq cargo \textit{command}\grqq{}. Wenn ein solches Programm von Cargo aufgerufen wird, übergibt es als ersten Parameter den Programmnamen. Als zweites die Bezeichnung des Programms (\textit{command}). Alle weiteren Parameter in der Befehlszeile werden unverändert weitergeleitet.
+Cargo ist so ausgelegt, dass es erweitert werden kann, ohne dass Cargo selbst modifiziert werden muss. Dazu muss ein Programm in der Form cargo-\textit{command} in einem der \verb"$PATH"-Verzeichnisse des Benutzers liegen. Anschließend kann es mit \glqq cargo \textit{command}\grqq{} aufgerufen werden. Wenn ein solches Programm von Cargo aufgerufen wird, übergibt es als ersten Parameter den Programmnamen, als zweites die Bezeichnung des Programms (\textit{command}). Alle weiteren Parameter in der Befehlszeile werden unverändert weitergeleitet.
 
 Beispiel:
 
@@ -302,7 +320,7 @@ Beispiel:
     }
 \end{lstlisting}
 
-Obiges Programm gibt eine Liste der Parameter aus, die übergeben wurden. Es könnte auch in C programmiert sein, entscheidend ist, dass der Programmname in der richtigen Form ist.
+Obiges Programm \verb"cargo-listargs" gibt eine Liste der Parameter aus, die über\-geben wurden. Es könnte auch in C programmiert sein. Entscheidend ist, dass der Programmname in der richtigen Form ist.
 
 \begin{lstlisting}
     $ ./cargo-listargs arg1 arg2
